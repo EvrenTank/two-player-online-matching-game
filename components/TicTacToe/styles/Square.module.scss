@@ -1,0 +1,29 @@
+.square { 
+    width:auto;
+    aspect-ratio: 1;  
+    border: 1px solid black;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    .textSpan{
+        color:black;
+        width: 60%;
+        aspect-ratio: 1;
+        display:flex;
+        justify-content: center;
+        align-items: center;
+        font-size: xx-large;
+    }
+    @media (max-width: 768px) {
+        .textSpan{
+        }
+        
+    }
+    @media (max-width: 992px) {
+        .textSpan{
+        }
+        
+    }
+
+
+}
