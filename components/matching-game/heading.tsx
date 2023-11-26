@@ -20,7 +20,7 @@ const Heading = ({setColRowNumbers,colRowNumbers}:any) => {
             <Card.Title>"Matching Game"</Card.Title>
             <Card.Text>Sıradaki Oyuncu:{true ? "X":"O"}</Card.Text>
             <Button className="d-inline" variant="outline-info" size="lg" onClick={()=>{}}>RESET</Button>
-            <DropdownButton className="position-absolute top-50 end-0 translate-middle-y" title="Choose sizes" onSelect={handleSelect}>
+            <DropdownButton className="position-absolute top-50 end-0 translate-middle-y z-3" title="Choose sizes" onSelect={handleSelect}>
                     <Dropdown.Item eventKey="3x2">3x2</Dropdown.Item>
                     <Dropdown.Item eventKey="4x2">4x2</Dropdown.Item>
                     <Dropdown.Item eventKey="4x3">4x3</Dropdown.Item>
