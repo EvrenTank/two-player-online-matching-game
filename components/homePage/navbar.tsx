@@ -18,11 +18,11 @@ const MyNavbar = () => {
           <Navbar.Collapse id="basic-navbar-nav" className='' >
             <Nav className="me-auto">
               <NavDropdown title={true ? 'Choose a Game' : <Image src='/NavbarImages/threeDots.png' alt='See more' width={10} height={10}></Image>} id="basic-nav-dropdown">
-                <NavDropdown.Item href="#action/3.1">Tic Tac Toe</NavDropdown.Item>
+                <NavDropdown.Item href="/tictactoe">Tic Tac Toe</NavDropdown.Item>
                 <NavDropdown.Divider />
-                <NavDropdown.Item href="#action/3.2">MineSweeper</NavDropdown.Item>
+                <NavDropdown.Item href="minesweeper">MineSweeper</NavDropdown.Item>
                 <NavDropdown.Divider />  
-                <NavDropdown.Item href="#action/3.3">Matching Game</NavDropdown.Item>
+                <NavDropdown.Item href="matching-game">Matching Game</NavDropdown.Item>
 
               </NavDropdown>
             </Nav>
