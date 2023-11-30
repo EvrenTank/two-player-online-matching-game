@@ -1,7 +1,7 @@
 'use client';
 import Card from 'react-bootstrap/Card';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 const Square = ({imgSrc,index,choosentwo,setChoosentwo,disabled,setDisabled,check}:{
     imgSrc:string,
     index:string,
@@ -14,14 +14,34 @@ const Square = ({imgSrc,index,choosentwo,setChoosentwo,disabled,setDisabled,chec
 
     const [open, setOpen]=useState(false);
     const [matched,setMatched] = useState(false);
-    const checkIfMatched = () => {
-        for(let i=0;i<disabled.length;i++) {
-            if(disabled[i] == index ){
-                setMatched(true);
-            }
+
+    const openClose = () => {
+
+        if(choosentwo.first.index == index ||choosentwo.second.index == index){
+            setOpen(true);
+        }
+        else if(matched){
+            setOpen(true);
+        }
+        else if(!matched){
+            setOpen(false);//Burası hemen update edilmedigi icin oluyor o hata. Eşleştikten snra önce kapanıyor snra tekrar açılıyor.
         }
     }
-    
+
+    const checkIfMatched = () => {
+        for(let i=0;i<disabled.length;i++) {
+            console.log("disabled[",i,"]==",disabled[i]);
+            if(disabled[i] == index ){
+                setMatched(true);
+                console.log("matched",matched);
+            }
+        }
+        setTimeout(openClose,1000);
+        
+    }
+    useEffect(()=>{
+        checkIfMatched();
+    },[disabled,choosentwo]);
 
     return (
         <Card className='w-auto ratio ratio-1x1' 
@@ -31,9 +51,7 @@ const Square = ({imgSrc,index,choosentwo,setChoosentwo,disabled,setDisabled,chec
             opacity: matched ? 0.7 : 1,
         }}
         onClick={()=>{
-            setOpen(open => !open);
-            check();
-            checkIfMatched();
+            check(imgSrc,index);
         }}
 >
             <Card className='w-100 h-100' style={{

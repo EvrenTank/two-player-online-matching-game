@@ -1,6 +1,6 @@
 import styles from './styles/Square.module.scss';
 import { useState,useEffect } from 'react';
-const Square = ({x,setX,index,winner,setWinner,all,setAll,reset,setReset}:any) => {
+const Square = ({x,setX,index,winner,setWinner,all,setAll,reset,setResetz}:any) => {
 
     const [intext,setIntext] = useState("");
     useEffect(() =>{

@@ -10,10 +10,12 @@ const MatchingGame = () => {
         first:{
             imgUrl:null,
             index:null,
+            open:false,
         },
         second:{
             imgUrl:null,
-            index:null
+            index:null,
+            open:false,
         }
     });
     const [disabled,setDisabled] = useState<any>([]);
@@ -28,12 +30,16 @@ const MatchingGame = () => {
         }
         else if(choosentwo.first.imgUrl != null && choosentwo.second.imgUrl != null){
             if(choosentwo.first.imgUrl == choosentwo.second.imgUrl) {
+                console.log("sağlama yapıldı");
                 setDisabled((disabled:any) => [...disabled,choosentwo.first.index, choosentwo.second.index]);
-                setChoosentwo({...choosentwo,first:{imgUrl:null,index:null},second:{imgUrl:null,index:null}});
+                console.log("disabled",disabled);
+                setChoosentwo({...choosentwo,first:{imgUrl:imgUrl,index:index},second:{imgUrl:null,index:null}});
+                console.log("choosentwo",choosentwo.first.imgUrl);
             }
-            else if(choosentwo.first.imgUrl != choosentwo.second.imgUrl) {
-                setChoosentwo({...choosentwo,first:{imgUrl:null,index:null},second:{imgUrl:null,index:null}});            }
+            else {
+                setChoosentwo({...choosentwo,first:{imgUrl:imgUrl,index:index},second:{imgUrl:null,index:null}});            }
         }
+        console.log("choosentwo==",choosentwo);
     }
 
     const [colRowNumbers,setColRowNumbers] = useState<{rowNumber:number,colNumber:number}>( {
@@ -44,44 +50,45 @@ const MatchingGame = () => {
         {rowComponents:[],
          colComponents:[]});
     const [imageurls,setImageurls] = useState<string[]>([]);
-    const updateComponents = () => {
+    const updateComponents = (newcolRowNumbers:any) => {
 
         const rowArray:string[] = [];
         const colArray:string[] = [];
 
-        for(let i=0;i<colRowNumbers.rowNumber;i++){
-            rowArray.push(`row ${i}`);
+        for(let i=0;i<newcolRowNumbers.rowNumber;i++){
+            rowArray.push(`${i}`);
         }
-        for(let i=0;i<colRowNumbers.colNumber;i++){
-            colArray.push(`col ${i}`);
+        for(let i=0;i<newcolRowNumbers.colNumber;i++){
+            colArray.push(`${i}`);
         }
-        setComponents({...components, rowComponents:rowArray, colComponents:colArray});
+        setComponents(components => ({...components, rowComponents:rowArray, colComponents:colArray}));
         
-        const neededImagesNumber = colRowNumbers.rowNumber * colRowNumbers.colNumber /2;
+        const neededImagesNumber = newcolRowNumbers.rowNumber * newcolRowNumbers.colNumber /2;
         const slicedArray = [...imgDirectoriesArray.slice(0,neededImagesNumber),...imgDirectoriesArray.slice(0,neededImagesNumber)];
         const shuffledArray = shuffleArray(slicedArray);
         setImageurls(shuffledArray);
     }
 
     useEffect(()=>{
-        updateComponents();
-    },[colRowNumbers]);
+        updateComponents(colRowNumbers);
+    },[colRowNumbers.colNumber,colRowNumbers.rowNumber,colRowNumbers]);
 
     return (
 
                 <Container className='d-grid gap-2 col-12 col-md-6 col-lg-4'>
                 <Row> <Heading setColRowNumbers={setColRowNumbers} colRowNumbers={colRowNumbers} /> </Row>
-                {components.rowComponents.map((rowComponent,index1)=>{
-                    return (
-                        <Row key={index1}>
+                {components.rowComponents && components.rowComponents.map((rowComponent,index1)=>{
+                    return ( 
+                        <Row key={`${index1} ${colRowNumbers.colNumber} ${colRowNumbers.rowNumber}`}>
                         {components.colComponents.map((colComponent,index2)=>{
                             return (
-                                <Col key={index2}>
+                                <Col  key={`${index2} ${colRowNumbers.colNumber} ${colRowNumbers.rowNumber}`}>
                                     <Square
+                                    key={`${index2} ${colRowNumbers.colNumber} ${colRowNumbers.rowNumber}`}
                                     check={check}
                                     choosentwo={choosentwo} setChoosentwo={setChoosentwo} 
                                     disabled={disabled} setDisabled={setDisabled}
-                                    key={index2} index={index1+" "+index2} 
+                                    index={index1+" "+index2} 
                                     imgSrc={imageurls[(index1*colRowNumbers.colNumber)+index2]}/>
                                 </Col>
                             )
@@ -91,6 +98,7 @@ const MatchingGame = () => {
                     )
                 })
                 }
+                <Row>{choosentwo.first.imgUrl}<br/> {choosentwo.second.imgUrl}</Row>
             </Container>
     )
 }
