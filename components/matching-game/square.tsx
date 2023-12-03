@@ -21,10 +21,10 @@ const Square = ({imgSrc,index,choosentwo,setChoosentwo,disabled,setDisabled,chec
             setOpen(true);
         }
         else if(matched){
-            setOpen(true);
+            setOpen(true);//Burası hemen update edilmedigi icin oluyor o hata. Eşleştikten snra önce kapanıyor snra tekrar açılıyor.
         }
         else if(!matched){
-            setOpen(false);//Burası hemen update edilmedigi icin oluyor o hata. Eşleştikten snra önce kapanıyor snra tekrar açılıyor.
+            setOpen(false);
         }
     }
 
@@ -36,12 +36,12 @@ const Square = ({imgSrc,index,choosentwo,setChoosentwo,disabled,setDisabled,chec
                 console.log("matched",matched);
             }
         }
-        setTimeout(openClose,1000);
+        setTimeout(openClose,100);
         
     }
     useEffect(()=>{
         checkIfMatched();
-    },[disabled,choosentwo]);
+    },[disabled,choosentwo,matched]);
 
     return (
         <Card className='w-auto ratio ratio-1x1' 

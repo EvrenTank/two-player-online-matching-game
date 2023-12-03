@@ -25,18 +25,18 @@ const MatchingGame = () => {
         if(choosentwo.first.imgUrl == null && choosentwo.second.imgUrl == null){
            setChoosentwo({...choosentwo,first:{imgUrl:imgUrl,index:index}});
         }
-        else if(choosentwo.second.imgUrl == null && choosentwo.first.imgUrl != null){
+        else if(choosentwo.second.imgUrl == null && choosentwo.first.imgUrl != null && choosentwo.first.index != index){
             setChoosentwo({...choosentwo,second:{imgUrl:imgUrl,index:index}});
         }
         else if(choosentwo.first.imgUrl != null && choosentwo.second.imgUrl != null){
-            if(choosentwo.first.imgUrl == choosentwo.second.imgUrl) {
+            if(choosentwo.first.imgUrl == choosentwo.second.imgUrl && choosentwo.first.index != index && choosentwo.second.index != index) {
                 console.log("sağlama yapıldı");
                 setDisabled((disabled:any) => [...disabled,choosentwo.first.index, choosentwo.second.index]);
                 console.log("disabled",disabled);
                 setChoosentwo({...choosentwo,first:{imgUrl:imgUrl,index:index},second:{imgUrl:null,index:null}});
                 console.log("choosentwo",choosentwo.first.imgUrl);
             }
-            else {
+            else if(choosentwo.first.imgUrl != choosentwo.second.imgUrl && choosentwo.first.index != index && choosentwo.second.index != index) {
                 setChoosentwo({...choosentwo,first:{imgUrl:imgUrl,index:index},second:{imgUrl:null,index:null}});            }
         }
         console.log("choosentwo==",choosentwo);
@@ -71,7 +71,12 @@ const MatchingGame = () => {
 
     useEffect(()=>{
         updateComponents(colRowNumbers);
+        setChoosentwo({...choosentwo,first:{imgUrl:null,index:null},second:{imgUrl:null,index:null}});
+        setDisabled([]);
     },[colRowNumbers.colNumber,colRowNumbers.rowNumber,colRowNumbers]);
+    useEffect(()=>{ // Buralardan kaynaklanan hatalar var. Nasıl duzeltilecek bilmiyorum.
+        console.log("disabled",disabled);
+    },[disabled])
 
     return (
 
