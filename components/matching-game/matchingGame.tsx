@@ -20,7 +20,7 @@ const MatchingGame = () => {
     });
     const [disabled,setDisabled] = useState<any>([]);
     const [playerturn,setPlayerturn] = useState<any>(true);
-    const [score,setScore] = useState<{firstPlayerScore:number,secondPlayerScore:number}>({
+    const [score,setScore] = useState<{first:number,second:number}>({
         first:0,
         second:0
     })  
