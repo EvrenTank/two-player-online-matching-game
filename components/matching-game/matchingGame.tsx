@@ -3,9 +3,10 @@ import Heading from "./heading";
 import { Container,Row, Col } from "react-bootstrap";
 import { useEffect, useState } from "react";
 import Square from "./square";
-import {shuffleArray,imgDirectoriesArray} from "./images";
+import {shuffleArray,imgDirectories} from "./images";
 
 const MatchingGame = () => {
+    const [reset,setReset] = useState(true);
     const [choosentwo,setChoosentwo] = useState<{first:any,second:any}>({
         first:{
             imgUrl:null,
@@ -31,14 +32,28 @@ const MatchingGame = () => {
         }
         else if(choosentwo.second.imgUrl == null && choosentwo.first.imgUrl != null && choosentwo.first.index != index){
             setChoosentwo({...choosentwo,second:{imgUrl:imgUrl,index:index}});
+            //console.log("disabled.length",disabled.length);
+            if(disabled.length >= ((colRowNumbers.colNumber * colRowNumbers.rowNumber)-2)){
+                //console.log("burası calisiyor");
+                setDisabled((disabled:any) => [...disabled,choosentwo.first.index, index]);
+                                 // bu yapiya dikkat, return eklemeyince sikinti yasaniyor.
+                                 if(playerturn){
+                                    setScore( (prevScore:any) =>{ 
+                                        return {...prevScore,first:prevScore.first+1}});
+                                }
+                                else if(!playerturn) {
+                                    setScore( (prevScore:any) =>{ 
+                                        return {...prevScore,second:prevScore.second+1}});}
+                
+            }
         }
         else if(choosentwo.first.imgUrl != null && choosentwo.second.imgUrl != null){
             if(choosentwo.first.imgUrl == choosentwo.second.imgUrl && choosentwo.first.index != index && choosentwo.second.index != index) {
-                console.log("sağlama yapıldı");
+                //console.log("sağlama yapıldı");
                 setDisabled((disabled:any) => [...disabled,choosentwo.first.index, choosentwo.second.index]);
-                console.log("disabled",disabled);
+                //console.log("disabled",disabled);
                 setChoosentwo({...choosentwo,first:{imgUrl:imgUrl,index:index},second:{imgUrl:null,index:null}});
-                console.log("choosentwo",choosentwo.first.imgUrl);
+                //console.log("choosentwo",choosentwo.first.imgUrl);
                  // bu yapiya dikkat, return eklemeyince sikinti yasaniyor.
                 if(playerturn){
                     setScore( (prevScore:any) =>{ 
@@ -46,13 +61,13 @@ const MatchingGame = () => {
                 }
                 else if(!playerturn) {
                     setScore( (prevScore:any) =>{ 
-                        return {...prevScore,second:prevScore.second+1}});                }
+                        return {...prevScore,second:prevScore.second+1}});}
             }
             else if(choosentwo.first.imgUrl != choosentwo.second.imgUrl && choosentwo.first.index != index && choosentwo.second.index != index) {
                 setChoosentwo({...choosentwo,first:{imgUrl:imgUrl,index:index},second:{imgUrl:null,index:null}}); 
                 setPlayerturn((playerturn:boolean)=>!playerturn)           }
         }
-        console.log("choosentwo==",choosentwo);
+        //console.log("choosentwo==",choosentwo);
     }
 
     const [colRowNumbers,setColRowNumbers] = useState<{rowNumber:number,colNumber:number}>( {
@@ -62,10 +77,14 @@ const MatchingGame = () => {
     const [components,setComponents] = useState<{rowComponents:string[],colComponents:string[]}>(
         {rowComponents:[],
          colComponents:[]});
+         
     const [imageurls,setImageurls] = useState<string[]>([]);
+    const[imagetypes,setImagetypes] = useState<{type:string}>({type:"fruits"});
 
     // row ve col number degistiginde componentlari ve imagelari tekrar olusturuyor.
     const updateComponents = (newcolRowNumbers:any) => {
+        console.log("updateComponents   called");
+        console.log("disabled",disabled);
         const rowArray:string[] = [];
         const colArray:string[] = [];
         for(let i=0;i<newcolRowNumbers.rowNumber;i++){
@@ -74,23 +93,23 @@ const MatchingGame = () => {
         for(let i=0;i<newcolRowNumbers.colNumber;i++){
             colArray.push(`${i}`);
         }
+        setDisabled([]);
         setComponents(components => ({...components, rowComponents:rowArray, colComponents:colArray}));
         const neededImagesNumber = newcolRowNumbers.rowNumber * newcolRowNumbers.colNumber /2;
-        const slicedArray = [...imgDirectoriesArray.slice(0,neededImagesNumber),...imgDirectoriesArray.slice(0,neededImagesNumber)];
-        const shuffledArray = shuffleArray(slicedArray);
+        const shuffledArray = shuffleArray(imgDirectories,imagetypes.type,neededImagesNumber);
         setImageurls(shuffledArray);
     }
 
     useEffect(()=>{
         updateComponents(colRowNumbers);
         setChoosentwo({...choosentwo,first:{imgUrl:null,index:null},second:{imgUrl:null,index:null}});
-    },[colRowNumbers.colNumber,colRowNumbers.rowNumber,colRowNumbers]);
+    },[colRowNumbers.colNumber,colRowNumbers.rowNumber,colRowNumbers,imagetypes.type,reset]);
     return (
 
                 <Container className='d-grid gap-2 col-12 col-md-6 col-lg-4'>
                 <Row> <Heading setColRowNumbers={setColRowNumbers} colRowNumbers={colRowNumbers} updateComponents={updateComponents} setDisabled={setDisabled}
-                playerturn={playerturn}
-                score={score} setScore={setScore} setPlayerturn={setPlayerturn}
+                playerturn={playerturn} reset = {reset} setReset={setReset}
+                score={score} setScore={setScore} setPlayerturn={setPlayerturn} imagetypes={imagetypes} setImagetypes={setImagetypes}
                 /> </Row>
                 {components.rowComponents && components.rowComponents.map((rowComponent,index1)=>{
                     return ( 
@@ -113,7 +132,6 @@ const MatchingGame = () => {
                     )
                 })
                 }
-                <Row>{choosentwo.first.imgUrl}<br/> {choosentwo.second.imgUrl}</Row>
             </Container>
     )
 }

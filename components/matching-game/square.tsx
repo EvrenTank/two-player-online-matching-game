@@ -17,7 +17,7 @@ const Square = ({imgSrc,index,choosentwo,setChoosentwo,disabled,setDisabled,chec
 
     const openClose = () => {
 
-        if(choosentwo.first.index == index ||choosentwo.second.index == index){
+        if(choosentwo.first.index == index || choosentwo.second.index == index){
             setOpen(true);
         }
         else if(matched){
@@ -29,8 +29,9 @@ const Square = ({imgSrc,index,choosentwo,setChoosentwo,disabled,setDisabled,chec
     }
 
     const checkIfMatched = () => {
+        console.log("disabled",disabled);
         for(let i=0;i<disabled.length;i++) {
-            console.log("disabled[",i,"]==",disabled[i]);
+            // console.log("disabled[",i,"]==",disabled[i]);
             if(disabled[i] == index ){
                 setMatched(true);
                 console.log("matched",matched);
@@ -56,7 +57,7 @@ const Square = ({imgSrc,index,choosentwo,setChoosentwo,disabled,setDisabled,chec
 >
             <Card className='w-100 h-100' style={{
                 transformOrigin:'center',
-                transitionDuration:'1s',
+                transitionDuration: '1s',
                 transform: !open ? 'rotateY(180deg)' : 'rotateY(0deg)',
                 backfaceVisibility:'hidden'
             }} >
