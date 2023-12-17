@@ -1,12 +1,11 @@
 import Card from "react-bootstrap/Card";
-import Button from "react-bootstrap/Button";
 import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
-import { useEffect } from "react";
+import { useEffect,useState } from "react";
 
 const Heading = ({setColRowNumbers,colRowNumbers,updateComponents,setDisabled,reset,setReset,
                   playerturn,score,setScore,setPlayerturn,imagetypes,setImagetypes}:any) => {
-
+    const [dummy,setDummy] = useState(false);
     const handleSelect = (eventKey:string | null,event:any) => {
        const choosenValues = eventKey!.split("x");
        const rowNumber = choosenValues[0];
@@ -20,7 +19,7 @@ const Heading = ({setColRowNumbers,colRowNumbers,updateComponents,setDisabled,re
        setScore( (prevScore:any) =>{ 
         return {...prevScore,first:0,second:0}});
        setPlayerturn(true);
-       setReset((reset:boolean) => !reset);
+       setReset((prev:boolean) => !prev);
     }
 
     const handleSelectPictures = (eventKey:string | null,event:any) => {
@@ -30,8 +29,7 @@ const Heading = ({setColRowNumbers,colRowNumbers,updateComponents,setDisabled,re
        setScore((prevScore:any)=> {
         return {...prevScore,first:0,second:0}});
         setPlayerturn(true);   
-       setReset((reset:boolean) => !reset);
-
+        setReset((prev:boolean) => !prev);
      }
 
     useEffect(()=>{
@@ -45,14 +43,20 @@ const Heading = ({setColRowNumbers,colRowNumbers,updateComponents,setDisabled,re
                 <Card.Text><b className="text-info" >Player 1:</b>{score.first} <b className="text-info"> Player 2:</b>{score.second}</Card.Text>             
             </Card.Title>
             <Card.Title className="d-flex justify-content-around w-100 " >                
-                    <DropdownButton className="z-3 align-self-end" title="Choose sizes" onSelect={handleSelect}>
-                    <Dropdown.Item eventKey="3x2">3x2</Dropdown.Item>
-                    <Dropdown.Item eventKey="4x2">4x2</Dropdown.Item>
-                    <Dropdown.Item eventKey="4x3">4x3</Dropdown.Item>
-                    <Dropdown.Item eventKey="5x4">5x4</Dropdown.Item>
-                    <Dropdown.Item eventKey="5x6">5x6</Dropdown.Item>
+                    <DropdownButton className="z-3 align-self-end" 
+                    title={`Sizes ${colRowNumbers.rowNumber}x${colRowNumbers.colNumber}`} onSelect={handleSelect}>
+                    <Dropdown.Item eventKey="3x2" 
+                    active={(colRowNumbers.rowNumber == 3 && colRowNumbers.colNumber == 2) ? true:false}>3x2</Dropdown.Item>
+                    <Dropdown.Item eventKey="4x2" 
+                    active={(colRowNumbers.rowNumber == 4 && colRowNumbers.colNumber == 2) ? true:false}>4x2</Dropdown.Item>
+                    <Dropdown.Item eventKey="4x3"
+                    active={(colRowNumbers.rowNumber == 4 && colRowNumbers.colNumber == 3) ? true:false}>4x3</Dropdown.Item>
+                    <Dropdown.Item eventKey="5x4"
+                    active={(colRowNumbers.rowNumber == 5 && colRowNumbers.colNumber == 4) ? true:false}>5x4</Dropdown.Item>
+                    <Dropdown.Item eventKey="5x6"
+                    active={(colRowNumbers.rowNumber == 5 && colRowNumbers.colNumber == 6) ? true:false}>5x6</Dropdown.Item>
                     </DropdownButton>
-                    <DropdownButton className="z-3 align-self-end" title="Choose pictures" onSelect={handleSelectPictures}>
+                    <DropdownButton className="z-3 align-self-end" title={`Pictures (${imagetypes.type})`} onSelect={handleSelectPictures}>
                     <Dropdown.Item eventKey="fruits">Fruits</Dropdown.Item>
                     <Dropdown.Item eventKey="flags">Flags</Dropdown.Item>
                     <Dropdown.Item eventKey="animals">Animals</Dropdown.Item>

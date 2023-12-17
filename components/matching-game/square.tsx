@@ -2,18 +2,21 @@
 import Card from 'react-bootstrap/Card';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
-const Square = ({imgSrc,index,choosentwo,setChoosentwo,disabled,setDisabled,check}:{
+const Square = ({imgSrc,index,choosentwo,setChoosentwo,disabled,setDisabled,check,reset,setReset}:{
     imgSrc:string,
     index:string,
     choosentwo:any,
     setChoosentwo:any,
     disabled:any,
     setDisabled:any,
-    check:any
+    check:any,
+    reset:any,
+    setReset:any
 }) => {
 
     const [open, setOpen]=useState(false);
     const [matched,setMatched] = useState(false);
+    const [duration,setDuration] = useState(false);
 
     const openClose = () => {
 
@@ -43,13 +46,20 @@ const Square = ({imgSrc,index,choosentwo,setChoosentwo,disabled,setDisabled,chec
     useEffect(()=>{
         checkIfMatched();
     },[disabled,choosentwo,matched]);
+    useEffect(()=>{
+        setOpen(false);
+        setMatched(false);
+        setDuration(true);
+        setTimeout(()=>{setDuration(false)},300);
+
+    },[reset]);
 
     return (
         <Card className='w-auto ratio ratio-1x1' 
         style={{
             cursor:'pointer',
             pointerEvents: matched ? "none":"auto",
-            opacity: matched ? 0.7 : 1,
+            opacity: matched ? 0.5 : 1,
         }}
         onClick={()=>{
             check(imgSrc,index);
@@ -57,7 +67,7 @@ const Square = ({imgSrc,index,choosentwo,setChoosentwo,disabled,setDisabled,chec
 >
             <Card className='w-100 h-100' style={{
                 transformOrigin:'center',
-                transitionDuration: '1s',
+                transitionDuration: duration ? '0s' : '1s',
                 transform: !open ? 'rotateY(180deg)' : 'rotateY(0deg)',
                 backfaceVisibility:'hidden'
             }} >

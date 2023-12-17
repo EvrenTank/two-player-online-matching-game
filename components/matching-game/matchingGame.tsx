@@ -83,8 +83,7 @@ const MatchingGame = () => {
 
     // row ve col number degistiginde componentlari ve imagelari tekrar olusturuyor.
     const updateComponents = (newcolRowNumbers:any) => {
-        console.log("updateComponents   called");
-        console.log("disabled",disabled);
+
         const rowArray:string[] = [];
         const colArray:string[] = [];
         for(let i=0;i<newcolRowNumbers.rowNumber;i++){
@@ -122,7 +121,7 @@ const MatchingGame = () => {
                                     check={check}
                                     choosentwo={choosentwo} setChoosentwo={setChoosentwo} 
                                     disabled={disabled} setDisabled={setDisabled}
-                                    index={index1+" "+index2} 
+                                    index={index1+" "+index2} reset={reset} setReset={setReset}
                                     imgSrc={imageurls[(index1*colRowNumbers.colNumber)+index2]}/>
                                 </Col>
                             )
