@@ -19,7 +19,6 @@ const Heading = ({colRowNumbers,setColRowNumbers,updateComponents}:any) => {
         else {
             setTitle("Hard");
         }
-        updateComponents(colRowNumbers);
     }
     useEffect(()=>{handleSelect},[])
     return (
