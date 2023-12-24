@@ -2,10 +2,17 @@ import Image from 'next/image';
 import styles from './styles/Square.module.scss';
 import { useState,useEffect,useRef } from 'react';
 import { Card } from 'react-bootstrap';
-const Square = ({index,mined,minedsquares}:{
+const Square = ({index,mined,minedsquares,flagsNumber,setFlagsNumber,openedsquares,setOpenedsquares,msk,setMsk,reset}:{
     index:string,
     mined:boolean,
-    minedsquares:{rowIndex:number,colIndex:number}[]
+    minedsquares:{rowIndex:number,colIndex:number}[],
+    flagsNumber:number,
+    setFlagsNumber:any,
+    openedsquares:string[],
+    setOpenedsquares:any,
+    msk:boolean,
+    setMsk:any,
+    reset:boolean
 }) => {
 
     const [clicked,setClicked] = useState(false);
@@ -15,15 +22,43 @@ const Square = ({index,mined,minedsquares}:{
     const handleRightClick = (event:any) => {
         event.preventDefault();
         if(!leftclicked){
-            setClicked((prev)=> !prev);
-        }
-        
+            if(!clicked){
+                setFlagsNumber((prev:number)=>prev-1);
+            }
+            else if(clicked){
+                setFlagsNumber((prev:number)=>prev+1);
+            }
+            setClicked((prev)=> !prev);   
+        }  
     }
     const handleLeftClick = (event:any) => {
         if(!clicked){
             setLeftclicked(true);  
-        }
+            setOpenedsquares((openedsquares:string[])=>[...openedsquares,index]);
+            if(number == 0 && !mined ){
+                setOpenedsquares((openedsquares:string[])=>[
+                    ...openedsquares,
+                    `${parseInt(index.split(" ")[0])+1} ${parseInt(index.split(" ")[1])+1}`,
+                    `${parseInt(index.split(" ")[0])+1} ${parseInt(index.split(" ")[1])}`,
+                    `${parseInt(index.split(" ")[0])+1} ${parseInt(index.split(" ")[1])-1}`,
+                    `${parseInt(index.split(" ")[0])} ${parseInt(index.split(" ")[1])+1}`,
+                    `${parseInt(index.split(" ")[0])} ${parseInt(index.split(" ")[1])-1}`,
+                    `${parseInt(index.split(" ")[0])-1} ${parseInt(index.split(" ")[1])+1}`,
+                    `${parseInt(index.split(" ")[0])-1} ${parseInt(index.split(" ")[1])}`,
+                    `${parseInt(index.split(" ")[0])-1} ${parseInt(index.split(" ")[1])-1}`,               
+                ])
+            }
+            if(mined){
+                setMsk((msk:boolean) => true);
+            }  
+        }    
     }
+
+    const f  =() => {
+        
+    }
+
+
     const countNeighborMines = () => {
         const rowIndex = parseInt(index.split(" ")[0]);
         const colIndex = parseInt(index.split(" ")[1]);
@@ -36,29 +71,55 @@ const Square = ({index,mined,minedsquares}:{
                   setNumber((prev)=>{
                     return prev+1;
                   })
+                  continue;
                 }
                 else if(rowIndex == minedsquares[i].rowIndex && (colIndex == minedsquares[i].colIndex-1 || colIndex == minedsquares[i].colIndex+1)){
                     setNumber((prev)=>{
                       return prev+1;
                     })
+                    continue;
                 }
                 else if((rowIndex == minedsquares[i].rowIndex-1 || rowIndex == minedsquares[i].rowIndex+1 ) && 
                 (colIndex == minedsquares[i].colIndex-1 || colIndex == minedsquares[i].colIndex+1)){
                     setNumber((prev)=>{
                         return prev+1;
                       })
+                      continue;
                 }
         }
     }
 }
 
 useEffect(()=>{
+    setNumber(0);//useEffect iki defa calistigi icin number degeri olması gerekenin iki kati cikiyordu. Bundan dolayi
+    // useEffect baslangicinda number degerini 0 yaptim ve bu sorunu cozdum.
     countNeighborMines();
     console.log("number ", number)
-},[]);
+},[reset]);
+useEffect(()=>{
+    console.log("openedsquares", openedsquares);
+    for(let i of openedsquares){
+        if(i.split(" ")[0] === index.split(" ")[0] && i.split(" ")[1] === index.split(" ")[1]){
+            setLeftclicked(true);
+        }
+    }
+},[openedsquares]);
+useEffect(()=>{
+    setClicked(false);
+    setLeftclicked(false);
+},[reset]);
+
+useEffect(() =>{
+    if(mined && msk){
+        const randomTimeout = Math.floor(Math.random()*10);
+        setTimeout(()=>{
+            setLeftclicked(true);
+        }, randomTimeout*300);
+    }
+},[openedsquares]);
 
     return (
-        <Card className='w-auto ratio ratio-1x1' 
+        <Card className={`w-auto ratio ratio-1x1 ${leftclicked ? 'bg-light':'bg-white' } `}
         onContextMenu={handleRightClick}
         onClick={handleLeftClick}
         style={{

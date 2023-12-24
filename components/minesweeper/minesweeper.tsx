@@ -7,6 +7,11 @@ import { useState,useEffect } from 'react';
 const MineSweeper = ()=> {
 
     const [minedsquares,setMinedsquares] = useState<{rowIndex:number,colIndex:number}[]>([]);
+    const [flagsNumber,setFlagsNumber] = useState(20);
+    const [msk,setMsk] = useState(false); //msk: mined square clicked bunu game over icin de kullanabilirim.
+    const [reset,setReset] = useState(false); // true veya false olmasi onemsiz, bunu dependency olarak ekleyecegim.
+
+    const [openedsquares,setOpenedsquares] = useState<string[]>([]);
 
     const [colRowNumbers,setColRowNumbers] = useState<{rowNumber:number,colNumber:number}>( {
         rowNumber:10,
@@ -15,6 +20,16 @@ const MineSweeper = ()=> {
     const [components,setComponents] = useState<{rowComponents:string[],colComponents:string[]}>(
         {rowComponents:[],
          colComponents:[]});
+
+    const resetGame = () => {
+        setOpenedsquares([]);
+        setFlagsNumber(20);
+        setMsk(false);
+        setMinedsquares([]);
+        setReset((reset:boolean) => !reset);
+        placeMines();
+    };  
+
     const updateComponents = (newcolRowNumbers:{colNumber:number,rowNumber:number}) => {
         const rowArray:string[] = [];
         const colArray:string[] = [];
@@ -24,7 +39,7 @@ const MineSweeper = ()=> {
         for(let i=0;i<newcolRowNumbers.colNumber;i++){
             colArray.push(`${i}`);
         } 
-        setComponents({...components,rowComponents:rowArray,colComponents:colArray});
+        setComponents({rowComponents:rowArray,colComponents:colArray});
     };
 
      useEffect(()=>{
@@ -34,7 +49,7 @@ const MineSweeper = ()=> {
 
      const placeMines = () => {
         const minedIndexes:{rowIndex:number,colIndex:number}[] = [];
-        for(let i = 0; i < 100;i++)
+        for(let i = 0; i < 1000;i++)
         {
             const index1 = Math.floor(Math.random()*colRowNumbers.rowNumber);
             const index2 = Math.floor(Math.random()*colRowNumbers.colNumber);
@@ -42,10 +57,8 @@ const MineSweeper = ()=> {
             const minedindex:{rowIndex:number,colIndex:number} = {rowIndex:index1,colIndex:index2};
 
             if(minedIndexes.some(square => square.rowIndex === index1 && square.colIndex === index2) === false){
-                minedIndexes.push(minedindex);
-                   
-            }
-            
+                minedIndexes.push(minedindex);      
+            }   
                 if(minedIndexes.length === 20){
                     console.log("minedIndexes",minedIndexes);
                     break;
@@ -55,7 +68,6 @@ const MineSweeper = ()=> {
             return minedIndexes;
         });
         console.log("minedsquares",minedsquares);
-
      };
      useEffect(()=>{
         placeMines();
@@ -70,7 +82,10 @@ const MineSweeper = ()=> {
               <Heading 
                 colRowNumbers={colRowNumbers} 
                 setColRowNumbers={setColRowNumbers} 
-                updateComponents={updateComponents} /> 
+                updateComponents={updateComponents}
+                flagsNumber={flagsNumber}
+                resetGame={resetGame}
+                msk={msk} /> 
             </Row>
             {components.rowComponents.map((rowComponent,index1)=>{
                 return (
@@ -79,7 +94,10 @@ const MineSweeper = ()=> {
                             components.colComponents.map((colComponent,index2)=>{
                                 const mined = minedsquares.some(square => square.rowIndex === index1 && square.colIndex === index2);                                return (
                                     <Col key={`${index2}`} >
-                                        <Square index={`${index1} ${index2}`} mined={mined} minedsquares={minedsquares} ></Square>
+                                        <Square index={`${index1} ${index2}`} mined={mined} minedsquares={minedsquares} 
+                                        flagsNumber={flagsNumber} setFlagsNumber={setFlagsNumber}
+                                        openedsquares={openedsquares} setOpenedsquares={setOpenedsquares}
+                                        msk={msk} setMsk={setMsk} reset={reset}></Square>
                                     </Col>
                                 )
                             })
