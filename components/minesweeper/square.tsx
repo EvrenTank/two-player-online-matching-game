@@ -2,7 +2,8 @@ import Image from 'next/image';
 import styles from './styles/Square.module.scss';
 import { useState,useEffect,useRef } from 'react';
 import { Card } from 'react-bootstrap';
-const Square = ({index,mined,minedsquares,flagsNumber,setFlagsNumber,openedsquares,setOpenedsquares,msk,setMsk,reset,colRowNumbers}:{
+const Square = ({index,mined,minedsquares,flagsNumber,setFlagsNumber,openedsquares,setOpenedsquares,msk,setMsk,reset,colRowNumbers,
+completed,setCompleted}:{
     index:string,
     mined:boolean,
     minedsquares:{rowIndex:number,colIndex:number}[],
