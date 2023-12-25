@@ -4,7 +4,7 @@ import DropdownButton from 'react-bootstrap/DropdownButton';
 import { Button } from "react-bootstrap";
 import { useEffect, useState } from "react";
 import Image from "next/image";
-const Heading = ({colRowNumbers,setColRowNumbers,updateComponents,flagsNumber,resetGame,msk}:any) => {
+const Heading = ({colRowNumbers,setColRowNumbers,updateComponents,flagsNumber,resetGame,msk,completed}:any) => {
     const [title,setTitle] = useState("Medium");
     const handleSelect = (eventKey:string | null,event:any)=> {
         setColRowNumbers((prev:any)=>{
@@ -29,9 +29,10 @@ const Heading = ({colRowNumbers,setColRowNumbers,updateComponents,flagsNumber,re
     ]);
     return (
         <Card className="text-center d-flex justify-content-center align-items-center">
-            <Card.Header as="h4" className="text-danger">Mine Sweeper</Card.Header>
+            <Card.Header as="h4" className="text-danger">Mining Sweeper</Card.Header>
             <Card.Title>
                 {msk && <Card.Text>GAME OVER</Card.Text>}
+                {completed && <Card.Text>YOU WON. Well Done</Card.Text>}
             <DropdownButton className="z-3 align-self-end" title={title} onSelect={handleSelect}>
                     <Dropdown.Item eventKey="6x8">Easy</Dropdown.Item>
                     <Dropdown.Item eventKey="10x7">Medium</Dropdown.Item>

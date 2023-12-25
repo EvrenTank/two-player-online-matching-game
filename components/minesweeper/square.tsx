@@ -13,7 +13,9 @@ const Square = ({index,mined,minedsquares,flagsNumber,setFlagsNumber,openedsquar
     msk:boolean,
     setMsk:any,
     reset:boolean,
-    colRowNumbers:{rowNumber:number, colNumber:number}
+    colRowNumbers:{rowNumber:number, colNumber:number},
+    completed:boolean,
+    setCompleted:any
 }) => {
 
     const [clicked,setClicked] = useState(false);
@@ -37,6 +39,7 @@ const Square = ({index,mined,minedsquares,flagsNumber,setFlagsNumber,openedsquar
             setLeftclicked(true);  
             setOpenedsquares((openedsquares:string[])=>[...openedsquares,index]);//Burasi if(number == 0 && !mined )icine aktariliyor. Cunku state 
             //degeri henuz update edilmedigi icin deger okunmuyor.
+            console.log("index",index, " mined=",mined);
             if(number == 0 && !mined ){
                 const rowIndex = parseInt(index.split(" ")[0]); 
                 const colIndex = parseInt(index.split(" ")[1]); 
@@ -58,10 +61,7 @@ const Square = ({index,mined,minedsquares,flagsNumber,setFlagsNumber,openedsquar
                 }).filter((value,index,array)=>{
                     return array.indexOf(value) === index;
                 });
-
-
                 setOpenedsquares(new_squares);
-
             }
             if(mined){
                 setMsk((msk:boolean) => true);
@@ -69,19 +69,11 @@ const Square = ({index,mined,minedsquares,flagsNumber,setFlagsNumber,openedsquar
         }    
     }
 
-    const f  =() => {
-        
-    }
-
-
     const countNeighborMines = () => {
         const rowIndex = parseInt(index.split(" ")[0]);
         const colIndex = parseInt(index.split(" ")[1]);
-        console.log("rowIndex ",rowIndex," type ",typeof(rowIndex));
-        console.log("colIndex",colIndex);
         if(!mined){
             for(let i=0;i<minedsquares.length;i++){
-                console.log(minedsquares[i]);
                 if(colIndex == minedsquares[i].colIndex && (rowIndex == minedsquares[i].rowIndex-1 || rowIndex == minedsquares[i].rowIndex+1)){
                   setNumber((prev)=>{
                     return prev+1;
@@ -119,6 +111,11 @@ useEffect(()=>{
             setLeftclicked(true);
         }
     }
+    setTimeout(()=>{
+        if(openedsquares.length == colRowNumbers.colNumber * colRowNumbers.rowNumber - 20){
+            setCompleted(true);
+        }
+    },300);
 },[openedsquares]);
 
 useEffect(()=>{
@@ -126,18 +123,51 @@ useEffect(()=>{
     setLeftclicked(false);
 },[reset]);
 
+// Utility function to check if two arrays are equal
+const arraysAreEqual = (array1:any, array2:any) => {
+    return array1.length === array2.length && array1.every((value:any, index:number) => value === array2[index]);
+};
+
+
+useEffect(()=>{
+    for(let i=0;i<openedsquares.length;i++){
+        const row = parseInt(openedsquares[i].split(" ")[0]);
+        const col = parseInt(openedsquares[i].split(" ")[1]);
+        const row1 = parseInt(index.split(" ")[0]);
+        const col1 = parseInt(index.split(" ")[1]);
+        if(row == row1 && col == col1 && number == 0 && !mined) {
+            const new_squares = [
+                ...openedsquares,
+                `${(row+1)} ${(col+1)}`,
+                `${(row+1)} ${(col)}`,
+                `${(row+1)} ${(col-1)}`,
+                `${(row)} ${(col+1)}`,
+                `${(row)} ${(col-1)}`,
+                `${(row-1)} ${(col+1)}`,
+                `${(row-1)} ${(col)}`,
+                `${(row-1)} ${(col-1)}`,               
+            ].filter((square)=>{
+                const rI = parseInt(square.split(" ")[0]);
+                const cI = parseInt(square.split(" ")[1]);
+                return rI>=0 && rI<colRowNumbers.rowNumber && cI>=0 && cI<colRowNumbers.colNumber;
+            }).filter((value,index,array)=>{
+                return array.indexOf(value) === index;
+            });
+            if(!arraysAreEqual(new_squares, openedsquares)){
+            setOpenedsquares(new_squares);}
+            
+        }
+    }
+},[openedsquares]);
 useEffect(() =>{
+    
     if(mined && msk){
         const randomTimeout = Math.floor(Math.random()*10);
         setTimeout(()=>{
             setLeftclicked(true);
         }, randomTimeout*50);
     }
-    else {
-        for(let i=0;i<openedsquares.length;i++){
-            if(openedsquares[i]){}
-        }
-    }
+  
 },[openedsquares]);
 
     return (
@@ -145,7 +175,8 @@ useEffect(() =>{
         onContextMenu={handleRightClick}
         onClick={handleLeftClick}
         style={{
-            cursor:'pointer',
+            cursor: 'pointer',
+            pointerEvents: msk ? 'none' : 'auto'
         }}
        >
        {(clicked) &&

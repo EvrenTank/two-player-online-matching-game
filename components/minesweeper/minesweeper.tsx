@@ -6,18 +6,11 @@ import { useState,useEffect } from 'react';
 
 const MineSweeper = ()=> {
 
-    const [allsituation,setAllSituation] = useState<{
-        index:string,
-        mined:string,
-        neighborminenumber:number,
-        isleftclicked:boolean,
-        isrightclicked:boolean
-       }[]>([]);
-
     const [minedsquares,setMinedsquares] = useState<{rowIndex:number,colIndex:number}[]>([]);
     const [flagsNumber,setFlagsNumber] = useState(20);
     const [msk,setMsk] = useState(false); //msk: mined square clicked bunu game over icin de kullanabilirim.
     const [reset,setReset] = useState(false); // true veya false olmasi onemsiz, bunu dependency olarak ekleyecegim.
+    const [completed,setcompleted] = useState(false); // true veya false olmasi onemsiz, bunu dependency olarak ekleyecegim.
     
     const [openedsquares,setOpenedsquares] = useState<string[]>([]);
 
@@ -61,7 +54,6 @@ const MineSweeper = ()=> {
         {
             const index1 = Math.floor(Math.random()*colRowNumbers.rowNumber);
             const index2 = Math.floor(Math.random()*colRowNumbers.colNumber);
-            
             const minedindex:{rowIndex:number,colIndex:number} = {rowIndex:index1,colIndex:index2};
 
             if(minedIndexes.some(square => square.rowIndex === index1 && square.colIndex === index2) === false){
@@ -93,7 +85,8 @@ const MineSweeper = ()=> {
                 updateComponents={updateComponents}
                 flagsNumber={flagsNumber}
                 resetGame={resetGame}
-                msk={msk} /> 
+                msk={msk}
+                completed={completed} /> 
             </Row>
             {components.rowComponents.map((rowComponent,index1)=>{
                 return (
@@ -106,7 +99,9 @@ const MineSweeper = ()=> {
                                         flagsNumber={flagsNumber} setFlagsNumber={setFlagsNumber}
                                         openedsquares={openedsquares} setOpenedsquares={setOpenedsquares}
                                         msk={msk} setMsk={setMsk} reset={reset}
-                                        colRowNumbers={colRowNumbers}></Square>
+                                        colRowNumbers={colRowNumbers}
+                                        completed={completed}
+                                        setCompleted={setcompleted}></Square>
                                     </Col>
                                 )
                             })
