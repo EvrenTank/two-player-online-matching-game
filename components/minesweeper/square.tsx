@@ -2,7 +2,7 @@ import Image from 'next/image';
 import styles from './styles/Square.module.scss';
 import { useState,useEffect,useRef } from 'react';
 import { Card } from 'react-bootstrap';
-const Square = ({index,mined,minedsquares,flagsNumber,setFlagsNumber,openedsquares,setOpenedsquares,msk,setMsk,reset}:{
+const Square = ({index,mined,minedsquares,flagsNumber,setFlagsNumber,openedsquares,setOpenedsquares,msk,setMsk,reset,colRowNumbers}:{
     index:string,
     mined:boolean,
     minedsquares:{rowIndex:number,colIndex:number}[],
@@ -12,7 +12,8 @@ const Square = ({index,mined,minedsquares,flagsNumber,setFlagsNumber,openedsquar
     setOpenedsquares:any,
     msk:boolean,
     setMsk:any,
-    reset:boolean
+    reset:boolean,
+    colRowNumbers:{rowNumber:number, colNumber:number}
 }) => {
 
     const [clicked,setClicked] = useState(false);
@@ -31,22 +32,36 @@ const Square = ({index,mined,minedsquares,flagsNumber,setFlagsNumber,openedsquar
             setClicked((prev)=> !prev);   
         }  
     }
-    const handleLeftClick = (event:any) => {
+    const handleLeftClick = () => {
         if(!clicked){
             setLeftclicked(true);  
-            setOpenedsquares((openedsquares:string[])=>[...openedsquares,index]);
+            setOpenedsquares((openedsquares:string[])=>[...openedsquares,index]);//Burasi if(number == 0 && !mined )icine aktariliyor. Cunku state 
+            //degeri henuz update edilmedigi icin deger okunmuyor.
             if(number == 0 && !mined ){
-                setOpenedsquares((openedsquares:string[])=>[
+                const rowIndex = parseInt(index.split(" ")[0]); 
+                const colIndex = parseInt(index.split(" ")[1]); 
+                const new_squares = [
                     ...openedsquares,
-                    `${parseInt(index.split(" ")[0])+1} ${parseInt(index.split(" ")[1])+1}`,
-                    `${parseInt(index.split(" ")[0])+1} ${parseInt(index.split(" ")[1])}`,
-                    `${parseInt(index.split(" ")[0])+1} ${parseInt(index.split(" ")[1])-1}`,
-                    `${parseInt(index.split(" ")[0])} ${parseInt(index.split(" ")[1])+1}`,
-                    `${parseInt(index.split(" ")[0])} ${parseInt(index.split(" ")[1])-1}`,
-                    `${parseInt(index.split(" ")[0])-1} ${parseInt(index.split(" ")[1])+1}`,
-                    `${parseInt(index.split(" ")[0])-1} ${parseInt(index.split(" ")[1])}`,
-                    `${parseInt(index.split(" ")[0])-1} ${parseInt(index.split(" ")[1])-1}`,               
-                ])
+                    index,
+                    `${(rowIndex+1)} ${(colIndex+1)}`,
+                    `${(rowIndex+1)} ${(colIndex)}`,
+                    `${(rowIndex+1)} ${(colIndex-1)}`,
+                    `${(rowIndex)} ${(colIndex+1)}`,
+                    `${(rowIndex)} ${(colIndex-1)}`,
+                    `${(rowIndex-1)} ${(colIndex+1)}`,
+                    `${(rowIndex-1)} ${(colIndex)}`,
+                    `${(rowIndex-1)} ${(colIndex-1)}`,               
+                ].filter((square)=>{
+                    const rI = parseInt(square.split(" ")[0]);
+                    const cI = parseInt(square.split(" ")[1]);
+                    return rI>=0 && rI<colRowNumbers.rowNumber && cI>=0 && cI<colRowNumbers.colNumber;
+                }).filter((value,index,array)=>{
+                    return array.indexOf(value) === index;
+                });
+
+
+                setOpenedsquares(new_squares);
+
             }
             if(mined){
                 setMsk((msk:boolean) => true);
@@ -96,6 +111,7 @@ useEffect(()=>{
     countNeighborMines();
     console.log("number ", number)
 },[reset]);
+
 useEffect(()=>{
     console.log("openedsquares", openedsquares);
     for(let i of openedsquares){
@@ -104,6 +120,7 @@ useEffect(()=>{
         }
     }
 },[openedsquares]);
+
 useEffect(()=>{
     setClicked(false);
     setLeftclicked(false);
@@ -114,7 +131,12 @@ useEffect(() =>{
         const randomTimeout = Math.floor(Math.random()*10);
         setTimeout(()=>{
             setLeftclicked(true);
-        }, randomTimeout*300);
+        }, randomTimeout*50);
+    }
+    else {
+        for(let i=0;i<openedsquares.length;i++){
+            if(openedsquares[i]){}
+        }
     }
 },[openedsquares]);
 

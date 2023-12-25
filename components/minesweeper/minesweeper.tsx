@@ -6,11 +6,19 @@ import { useState,useEffect } from 'react';
 
 const MineSweeper = ()=> {
 
+    const [allsituation,setAllSituation] = useState<{
+        index:string,
+        mined:string,
+        neighborminenumber:number,
+        isleftclicked:boolean,
+        isrightclicked:boolean
+       }[]>([]);
+
     const [minedsquares,setMinedsquares] = useState<{rowIndex:number,colIndex:number}[]>([]);
     const [flagsNumber,setFlagsNumber] = useState(20);
     const [msk,setMsk] = useState(false); //msk: mined square clicked bunu game over icin de kullanabilirim.
     const [reset,setReset] = useState(false); // true veya false olmasi onemsiz, bunu dependency olarak ekleyecegim.
-
+    
     const [openedsquares,setOpenedsquares] = useState<string[]>([]);
 
     const [colRowNumbers,setColRowNumbers] = useState<{rowNumber:number,colNumber:number}>( {
@@ -97,7 +105,8 @@ const MineSweeper = ()=> {
                                         <Square index={`${index1} ${index2}`} mined={mined} minedsquares={minedsquares} 
                                         flagsNumber={flagsNumber} setFlagsNumber={setFlagsNumber}
                                         openedsquares={openedsquares} setOpenedsquares={setOpenedsquares}
-                                        msk={msk} setMsk={setMsk} reset={reset}></Square>
+                                        msk={msk} setMsk={setMsk} reset={reset}
+                                        colRowNumbers={colRowNumbers}></Square>
                                     </Col>
                                 )
                             })
