@@ -29,6 +29,7 @@ const MineSweeper = ()=> {
         setMinedsquares([]);
         setReset((reset:boolean) => !reset);
         placeMines();
+        setcompleted(false);
     };  
 
     const updateComponents = (newcolRowNumbers:{colNumber:number,rowNumber:number}) => {
