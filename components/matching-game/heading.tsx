@@ -51,10 +51,14 @@ const Heading = ({setColRowNumbers,colRowNumbers,updateComponents,setDisabled,re
                     active={(colRowNumbers.rowNumber == 4 && colRowNumbers.colNumber == 2) ? true:false}>4x2</Dropdown.Item>
                     <Dropdown.Item eventKey="4x3"
                     active={(colRowNumbers.rowNumber == 4 && colRowNumbers.colNumber == 3) ? true:false}>4x3</Dropdown.Item>
-                    <Dropdown.Item eventKey="5x4"
-                    active={(colRowNumbers.rowNumber == 5 && colRowNumbers.colNumber == 4) ? true:false}>5x4</Dropdown.Item>
+                    <Dropdown.Item eventKey="4x5"
+                    active={(colRowNumbers.rowNumber == 4 && colRowNumbers.colNumber == 5) ? true:false}>4x5</Dropdown.Item>
                     <Dropdown.Item eventKey="5x6"
                     active={(colRowNumbers.rowNumber == 5 && colRowNumbers.colNumber == 6) ? true:false}>5x6</Dropdown.Item>
+                    <Dropdown.Item eventKey="5x8"
+                    active={(colRowNumbers.rowNumber == 5 && colRowNumbers.colNumber == 8) ? true:false}>5x8</Dropdown.Item>
+                    <Dropdown.Item eventKey="6x8"
+                    active={(colRowNumbers.rowNumber == 6 && colRowNumbers.colNumber == 8) ? true:false}>6x8</Dropdown.Item>
                     </DropdownButton>
                     <DropdownButton className="z-3 align-self-end" title={`Pictures (${imagetypes.type})`} onSelect={handleSelectPictures}>
                     <Dropdown.Item eventKey="fruits">Fruits</Dropdown.Item>

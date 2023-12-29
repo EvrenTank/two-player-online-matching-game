@@ -105,7 +105,7 @@ const MatchingGame = () => {
     },[colRowNumbers.colNumber,colRowNumbers.rowNumber,colRowNumbers,imagetypes.type,reset]);
     return (
 
-                <Container className='d-grid gap-2 col-12 col-md-6 col-lg-4'>
+                <Container className='d-grid gap-2 col-12 col-md-6 mb-5'>
                 <Row> <Heading setColRowNumbers={setColRowNumbers} colRowNumbers={colRowNumbers} updateComponents={updateComponents} setDisabled={setDisabled}
                 playerturn={playerturn} reset = {reset} setReset={setReset}
                 score={score} setScore={setScore} setPlayerturn={setPlayerturn} imagetypes={imagetypes} setImagetypes={setImagetypes}
