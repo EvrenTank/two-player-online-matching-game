@@ -1,4 +1,4 @@
-const imgDirectories:{fruits:string[],sports:string[],flags:string[],animals:string[]} = {
+const imgDirectories:{fruits:string[],sports:string[],flags:string[],animals:string[],food:string[]} = {
     fruits: [
         "/matching-game-images/fruits/apple.png",
         "/matching-game-images/fruits/apricot.png",
@@ -122,9 +122,61 @@ const imgDirectories:{fruits:string[],sports:string[],flags:string[],animals:str
         "/matching-game-images/animals/turtle.png",
         "/matching-game-images/animals/whale.png",
     ],
+    food:[
+        "/matching-game-images/food/baklava.png",
+        "/matching-game-images/food/beer.png",
+        "/matching-game-images/food/burrito.png",
+        "/matching-game-images/food/cake.png",
+        "/matching-game-images/food/cakeslice.png",
+        "/matching-game-images/food/cheese.png",
+        "/matching-game-images/food/cheesecake.png",
+        "/matching-game-images/food/chickenleg.png",
+        "/matching-game-images/food/cocktail.png",
+        "/matching-game-images/food/coconutdrink.png",
+        "/matching-game-images/food/coffeecup.png",
+        "/matching-game-images/food/cola.png",
+        "/matching-game-images/food/cookies.png",
+        "/matching-game-images/food/cupcake.png",
+        "/matching-game-images/food/dango.png",
+        "/matching-game-images/food/dessert.png",
+        "/matching-game-images/food/dessert1.png",
+        "/matching-game-images/food/donut.png",
+        "/matching-game-images/food/donut1.png",
+        "/matching-game-images/food/egg.png",
+        "/matching-game-images/food/fish.png",
+        "/matching-game-images/food/friedpotatoes.png",
+        "/matching-game-images/food/hamburger.png",
+        "/matching-game-images/food/icecream.png",
+        "/matching-game-images/food/icecream1.png",
+        "/matching-game-images/food/icecreamstick.png",
+        "/matching-game-images/food/juicebox.png",
+        "/matching-game-images/food/latte.png",
+        "/matching-game-images/food/lemonade.png",
+        "/matching-game-images/food/lobster.png",
+        "/matching-game-images/food/milk.png",
+        "/matching-game-images/food/orangejuice.png",
+        "/matching-game-images/food/pancake.png",
+        "/matching-game-images/food/pizza.png",
+        "/matching-game-images/food/poinsettia.png",
+        "/matching-game-images/food/popcorn.png",
+        "/matching-game-images/food/popsicle.png",
+        "/matching-game-images/food/ramen.png",
+        "/matching-game-images/food/rice.png",
+        "/matching-game-images/food/rollcake.png",
+        "/matching-game-images/food/salad.png",
+        "/matching-game-images/food/smoothie.png",
+        "/matching-game-images/food/soda.png",
+        "/matching-game-images/food/soup.png",
+        "/matching-game-images/food/spaghetti.png",
+        "/matching-game-images/food/sundae.png",
+        "/matching-game-images/food/sushi.png",
+        "/matching-game-images/food/taco.png",
+        "/matching-game-images/food/tiramisu.png",
+        "/matching-game-images/food/water.png",
+    ]
 };
 
-const shuffleArray = (myfirstArray:{fruits:string[],flags:string[],animals:string[],sports:string[],},imagetypes:string,neededImagesNumber:number) : string[]=>{
+const shuffleArray = (myfirstArray:{fruits:string[],flags:string[],animals:string[],sports:string[],food:string[]},imagetypes:string,neededImagesNumber:number) : string[]=>{
     var myArray = myfirstArray.fruits;
     if(imagetypes == "sports"){
          myArray = myfirstArray.sports;
@@ -134,8 +186,10 @@ const shuffleArray = (myfirstArray:{fruits:string[],flags:string[],animals:strin
     }
     else if(imagetypes == "animals"){
          myArray = myfirstArray.animals;
-
-    }
+    }   
+    else if(imagetypes == "food"){
+        myArray = myfirstArray.food;
+   }
     for(let i=myArray.length-1;i>0;i--){
         const j = Math.floor(Math.random() * (i+1));
         [myArray[i],myArray[j]] = [myArray[j],myArray[i]];

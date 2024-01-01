@@ -61,9 +61,10 @@ const Heading = ({setColRowNumbers,colRowNumbers,updateComponents,setDisabled,re
                     active={(colRowNumbers.rowNumber == 6 && colRowNumbers.colNumber == 8) ? true:false}>6x8</Dropdown.Item>
                     </DropdownButton>
                     <DropdownButton className="z-3 align-self-end" title={`Pictures (${imagetypes.type})`} onSelect={handleSelectPictures}>
-                    <Dropdown.Item eventKey="fruits">Fruits</Dropdown.Item>
-                    <Dropdown.Item eventKey="flags">Flags</Dropdown.Item>
                     <Dropdown.Item eventKey="animals">Animals</Dropdown.Item>
+                    <Dropdown.Item eventKey="flags">Flags</Dropdown.Item>
+                    <Dropdown.Item eventKey="food">Food</Dropdown.Item>
+                    <Dropdown.Item eventKey="fruits">Fruits</Dropdown.Item>
                     <Dropdown.Item eventKey="sports">Sports</Dropdown.Item>
                     </DropdownButton> 
             </Card.Title>
