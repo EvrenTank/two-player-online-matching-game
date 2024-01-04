@@ -1,6 +1,7 @@
 const imgDirectories:{fruits:string[],sports:string[],flags:string[],animals:string[],food:string[]} = {
     fruits: [
         "/matching-game-images/fruits/apple.png",
+        "/matching-game-images/fruits/apple2.png",
         "/matching-game-images/fruits/apricot.png",
         "/matching-game-images/fruits/avocado.png",
         "/matching-game-images/fruits/blackberry.png",
@@ -19,6 +20,7 @@ const imgDirectories:{fruits:string[],sports:string[],flags:string[],animals:str
         "/matching-game-images/fruits/melon.png",
         "/matching-game-images/fruits/orange.png",
         "/matching-game-images/fruits/orange2.png",
+        "/matching-game-images/fruits/papaya.png",
         "/matching-game-images/fruits/passion-fruit.png",
         "/matching-game-images/fruits/pea.png",
         "/matching-game-images/fruits/peach.png",
@@ -26,6 +28,7 @@ const imgDirectories:{fruits:string[],sports:string[],flags:string[],animals:str
         "/matching-game-images/fruits/persimmon.png",
         "/matching-game-images/fruits/plum.png",
         "/matching-game-images/fruits/pomegranate.png",
+        "/matching-game-images/fruits/raspberries.png",
         "/matching-game-images/fruits/salad.png",
         "/matching-game-images/fruits/star-fruit.png",
         "/matching-game-images/fruits/strawberry.png",
@@ -117,6 +120,7 @@ const imgDirectories:{fruits:string[],sports:string[],flags:string[],animals:str
         "/matching-game-images/animals/goldfish.png",
         "/matching-game-images/animals/gorilla.png",
         "/matching-game-images/animals/hen.png",
+        "/matching-game-images/animals/kiwi.png",
         "/matching-game-images/animals/koala.png",
         "/matching-game-images/animals/ladybug.png",
         "/matching-game-images/animals/lion.png",
