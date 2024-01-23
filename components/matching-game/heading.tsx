@@ -1,10 +1,11 @@
 import Card from "react-bootstrap/Card";
 import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
+import { Button } from "react-bootstrap";
 import { useEffect,useState } from "react";
 
 const Heading = ({setColRowNumbers,colRowNumbers,updateComponents,setDisabled,reset,setReset,
-                  playerturn,score,setScore,setPlayerturn,imagetypes,setImagetypes}:any) => {
+                  playerturn,score,setScore,setPlayerturn,imagetypes,setImagetypes,resetImages}:any) => {
     const [dummy,setDummy] = useState(false);
     const handleSelect = (eventKey:string | null,event:any) => {
        const choosenValues = eventKey!.split("x");
@@ -69,7 +70,7 @@ const Heading = ({setColRowNumbers,colRowNumbers,updateComponents,setDisabled,re
                     </DropdownButton> 
             </Card.Title>
             <Card.Text className="w-100">Sıradaki Oyuncu:{playerturn ? "Player1":"Player2"}</Card.Text>
- 
+            <Button className="d-inline" variant="outline-info" size="lg" onClick={resetImages}>RESET</Button>
 
         </Card> 
     );

@@ -4,8 +4,10 @@ import { Container,Row, Col } from "react-bootstrap";
 import { useEffect, useState } from "react";
 import Square from "./square";
 import {shuffleArray,imgDirectories} from "./images";
+import {io,Socket} from "socket.io-client";
+const socket:Socket = io.connect("http://localhost:3001");
 
-const MatchingGame = () => {
+const MatchingGame = ({sendMessage,images,resetImages}:any) => {
     const [reset,setReset] = useState(true);
     const [choosentwo,setChoosentwo] = useState<{first:any,second:any}>({
         first:{
@@ -21,53 +23,72 @@ const MatchingGame = () => {
     });
     const [disabled,setDisabled] = useState<any>([]);
     const [playerturn,setPlayerturn] = useState<any>(true);
+
     const [score,setScore] = useState<{first:number,second:number}>({
         first:0,
         second:0
     })  
 
     const check = (imgUrl:string,index:string) => {
+        console.log("Check metodu çalışıyor mu?");
         if(choosentwo.first.imgUrl == null && choosentwo.second.imgUrl == null){
            setChoosentwo({...choosentwo,first:{imgUrl:imgUrl,index:index}});
         }
         else if(choosentwo.second.imgUrl == null && choosentwo.first.imgUrl != null && choosentwo.first.index != index){
             setChoosentwo({...choosentwo,second:{imgUrl:imgUrl,index:index}});
-            //console.log("disabled.length",disabled.length);
             if(disabled.length >= ((colRowNumbers.colNumber * colRowNumbers.rowNumber)-2)){
-                //console.log("burası calisiyor");
                 setDisabled((disabled:any) => [...disabled,choosentwo.first.index, index]);
                                  // bu yapiya dikkat, return eklemeyince sikinti yasaniyor.
                                  if(playerturn){
-                                    setScore( (prevScore:any) =>{ 
+                                    console.log("playerturn");
+                                    setScore((prevScore:any) =>{ 
+                                        socket.emit("setScore",{
+                                            score:{...prevScore,first:prevScore.first+1},
+                                            playerturn: "player1"
+                                        })
                                         return {...prevScore,first:prevScore.first+1}});
                                 }
                                 else if(!playerturn) {
+                                    console.log("playerturn");
+
                                     setScore( (prevScore:any) =>{ 
+                                        socket.emit("setScore",{
+                                            score:{...prevScore,second:prevScore.second+1},
+                                            playerturn:"player2"
+                                        })                                        
                                         return {...prevScore,second:prevScore.second+1}});}
                 
             }
         }
         else if(choosentwo.first.imgUrl != null && choosentwo.second.imgUrl != null){
             if(choosentwo.first.imgUrl == choosentwo.second.imgUrl && choosentwo.first.index != index && choosentwo.second.index != index) {
-                //console.log("sağlama yapıldı");
                 setDisabled((disabled:any) => [...disabled,choosentwo.first.index, choosentwo.second.index]);
-                //console.log("disabled",disabled);
                 setChoosentwo({...choosentwo,first:{imgUrl:imgUrl,index:index},second:{imgUrl:null,index:null}});
-                //console.log("choosentwo",choosentwo.first.imgUrl);
                  // bu yapiya dikkat, return eklemeyince sikinti yasaniyor.
                 if(playerturn){
                     setScore( (prevScore:any) =>{ 
+                        socket.emit("setScore",{
+                        score:{...prevScore,first:prevScore.first+1},
+                        playerturn:"player1"
+                        })
                         return {...prevScore,first:prevScore.first+1}});
                 }
                 else if(!playerturn) {
-                    setScore( (prevScore:any) =>{ 
+                    setScore( (prevScore:any) =>{
+
+                        socket.emit("setScore",{
+                        score:{...prevScore,first:prevScore.second+1},
+                        playerturn:"player2"
+                                }) 
                         return {...prevScore,second:prevScore.second+1}});}
             }
             else if(choosentwo.first.imgUrl != choosentwo.second.imgUrl && choosentwo.first.index != index && choosentwo.second.index != index) {
                 setChoosentwo({...choosentwo,first:{imgUrl:imgUrl,index:index},second:{imgUrl:null,index:null}}); 
+                socket.emit("setplayerTurn",{
+                    playerturn:!playerturn
+                });
                 setPlayerturn((playerturn:boolean)=>!playerturn)           }
         }
-        //console.log("choosentwo==",choosentwo);
     }
 
     const [colRowNumbers,setColRowNumbers] = useState<{rowNumber:number,colNumber:number}>( {
@@ -96,19 +117,65 @@ const MatchingGame = () => {
         setComponents(components => ({...components, rowComponents:rowArray, colComponents:colArray}));
         const neededImagesNumber = newcolRowNumbers.rowNumber * newcolRowNumbers.colNumber /2;
         const shuffledArray = shuffleArray(imgDirectories,imagetypes.type,neededImagesNumber);
-        setImageurls(shuffledArray);
+        setImageurls(images);
+        console.log("images",images);
+        console.log("imageurls",imageurls);
     }
+    useEffect(()=>{
+        console.log("images:",images);
+        updateComponents(colRowNumbers);
+        setPlayerturn(true);
+        setReset(reset=>!reset);
+    },[images]);
+    useEffect(()=>{
 
+    },[choosentwo]);
+
+    useEffect(()=>{
+        console.log("score");
+        socket.on("newScore", (data)=>{
+            console.log("score",data.score);
+            setScore(data.score);
+        })
+    },[disabled]);
+    useEffect(()=>{
+
+    },[])
+    useEffect(()=>{
+        console.log("choosentwo",choosentwo);
+        socket.on("playerturn",(data)=>{
+            setPlayerturn(data.playerturn);
+        })
+        socket.emit("setchoosentwo",{choosentwo:choosentwo})
+    },[choosentwo]);
+    useEffect(()=>{
+        socket.on("choosen",(data)=>{
+            
+            setChoosentwo((prev)=>{
+                //setChoosentwo({...choosentwo,first:{imgUrl:null,index:null},second:{imgUrl:null,index:null}
+                return {...prev,first:{imgUrl:data.choosentwo.first.imgUrl,index:data.choosentwo.first.index},second:{imgUrl:data.choosentwo.second.imgUrl,index:data.choosentwo.second.index}}
+            })
+        })
+    },[]);
+    useEffect(()=>{
+        socket.on("choosen",(data)=>{
+            console.log("buranın datası",data.choosentwo);
+        })
+    },[choosentwo])
+    
+
+    useEffect(()=>{updateComponents(colRowNumbers)},[]);
     useEffect(()=>{
         updateComponents(colRowNumbers);
         setChoosentwo({...choosentwo,first:{imgUrl:null,index:null},second:{imgUrl:null,index:null}});
     },[colRowNumbers.colNumber,colRowNumbers.rowNumber,colRowNumbers,imagetypes.type,reset]);
     return (
 
-                <Container className='d-grid gap-2 col-12 col-md-6 mb-5'>
+                <Container className='d-grid gap-2 col-12 col-md-6 mb-5' onClick={sendMessage}>
                 <Row> <Heading setColRowNumbers={setColRowNumbers} colRowNumbers={colRowNumbers} updateComponents={updateComponents} setDisabled={setDisabled}
                 playerturn={playerturn} reset = {reset} setReset={setReset}
                 score={score} setScore={setScore} setPlayerturn={setPlayerturn} imagetypes={imagetypes} setImagetypes={setImagetypes}
+                resetImages={resetImages}
                 /> </Row>
                 {components.rowComponents && components.rowComponents.map((rowComponent,index1)=>{
                     return ( 
@@ -118,7 +185,7 @@ const MatchingGame = () => {
                                 <Col  key={`${index2} ${colRowNumbers.colNumber} ${colRowNumbers.rowNumber}`}>
                                     <Square
                                     key={`${index2} ${colRowNumbers.colNumber} ${colRowNumbers.rowNumber}`}
-                                    check={check}
+                                    check={check} setPlayerturn={setPlayerturn}
                                     choosentwo={choosentwo} setChoosentwo={setChoosentwo} 
                                     disabled={disabled} setDisabled={setDisabled}
                                     index={index1+" "+index2} reset={reset} setReset={setReset}

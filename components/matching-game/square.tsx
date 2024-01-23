@@ -1,7 +1,10 @@
 'use client';
 import Card from 'react-bootstrap/Card';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import {io,Socket} from "socket.io-client";
+import { useEffect,useState } from 'react';
+import socket from './socket';
+
 const Square = ({imgSrc,index,choosentwo,setChoosentwo,disabled,setDisabled,check,reset,setReset}:{
     imgSrc:string,
     index:string,
@@ -11,7 +14,8 @@ const Square = ({imgSrc,index,choosentwo,setChoosentwo,disabled,setDisabled,chec
     setDisabled:any,
     check:any,
     reset:any,
-    setReset:any
+    setReset:any,
+    setPlayerturn:any;
 }) => {
 
     const [open, setOpen]=useState(false);
@@ -19,33 +23,66 @@ const Square = ({imgSrc,index,choosentwo,setChoosentwo,disabled,setDisabled,chec
     const [duration,setDuration] = useState(false);
 
     const openClose = () => {
-
         if(choosentwo.first.index == index || choosentwo.second.index == index){
             setOpen(true);
+            socket.emit('sendIndex',{
+                index:index,
+                open:true
+            });
         }
         else if(matched){
             setOpen(true);//Burası hemen update edilmedigi icin oluyor o hata. Eşleştikten snra önce kapanıyor snra tekrar açılıyor.
-        }
+            socket.emit('sendIndex',{
+                index:index,
+                open:true
+            });        }
         else if(!matched){
             setOpen(false);
-        }
+            socket.emit('sendIndex',{
+                index:index,
+                open:false
+            });          }
     }
 
     const checkIfMatched = () => {
-        console.log("disabled",disabled);
+        //console.log("disabled",disabled);
         for(let i=0;i<disabled.length;i++) {
             // console.log("disabled[",i,"]==",disabled[i]);
             if(disabled[i] == index ){
                 setMatched(true);
-                console.log("matched",matched);
+                socket.emit('isMatched',{
+                    index:index,
+                    matched:true
+                });
+                //console.log("matched",matched);
             }
         }
-        setTimeout(openClose,100);
-        
+        setTimeout(openClose,100);  
     }
     useEffect(()=>{
         checkIfMatched();
     },[disabled,choosentwo,matched]);
+
+    useEffect(()=> {
+        socket.on("getIndex",(data:{index:string,open:boolean})=>{
+            //console.log("burası çalışıyor");
+            //console.log("data",data);
+            //console.log("data.index",data.index);
+            //console.log("index",index);
+            if(data.index == index){
+                //console.log("data.index",data.index);
+                //console.log("data.open",data.open);
+                setOpen(data.open);
+            }
+        });
+        socket.on("setMatched",(data) => {
+            if(data.index == index && data.matched == true){
+                setMatched(true);
+            }
+        });
+    },[open]);
+
+    
     useEffect(()=>{
         setOpen(false);
         setMatched(false);
