@@ -77,7 +77,7 @@ const MatchingGame = ({sendMessage,images,resetImages,socket}:any) => {
                     setScore( (prevScore:any) =>{
 
                         socket.emit("setScore",{
-                        score:{...prevScore,first:prevScore.second+1},
+                        score:{...prevScore,second:prevScore.second+1},
                         playerturn:"player2"
                                 }) 
                         return {...prevScore,second:prevScore.second+1}});}
@@ -118,11 +118,11 @@ const MatchingGame = ({sendMessage,images,resetImages,socket}:any) => {
         const neededImagesNumber = newcolRowNumbers.rowNumber * newcolRowNumbers.colNumber /2;
         const shuffledArray = shuffleArray(imgDirectories,imagetypes.type,neededImagesNumber);
         setImageurls(images);
-        console.log("images",images);
-        console.log("imageurls",imageurls);
+        //console.log("images",images);
+        //console.log("imageurls",imageurls);
     }
     useEffect(()=>{
-        console.log("images:",images);
+        //console.log("images:",images);
         updateComponents(colRowNumbers);
         setPlayerturn(true);
         setReset(reset=>!reset);
@@ -136,7 +136,7 @@ const MatchingGame = ({sendMessage,images,resetImages,socket}:any) => {
     },[anyclick])
 
     useEffect(()=>{
-        console.log("score");
+        //console.log("score",);
         socket.on("newScore", (data:any)=>{
             console.log("score",data.score);
             setScore(data.score);
@@ -148,12 +148,7 @@ const MatchingGame = ({sendMessage,images,resetImages,socket}:any) => {
             setPlayerturn(data.playerturn);
         })
     },[choosentwo]);
-    useEffect(()=>{
-        console.log("socket",socket);
-    },[choosentwo]);
-   /* useEffect(()=>{
-        console.log("socket",socket);
-    },[socket]);*/
+
     
     /*useEffect(()=>{
         socket.on("choosen",(data)=>{

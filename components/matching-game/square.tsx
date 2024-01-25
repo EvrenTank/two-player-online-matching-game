@@ -85,9 +85,9 @@ const Square = ({
             }
         });
         socket.on("choosen",(data:any)=>{
-            console.log("data.choosentwo:",data.choosentwo);
-            console.log("kodun çalıştığı square:",index);
-            console.log("choosentwo:",choosentwo);
+            //console.log("data.choosentwo:",data.choosentwo);
+            //console.log("kodun çalıştığı square:",index);
+            //console.log("choosentwo:",choosentwo);
             if(data.index == index ){
             setChoosentwo((prev:any)=>{
                 //setChoosentwo({...choosentwo,first:{imgUrl:null,index:null},second:{imgUrl:null,index:null}

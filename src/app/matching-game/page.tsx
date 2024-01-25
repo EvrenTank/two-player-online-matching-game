@@ -17,15 +17,15 @@ const Page=()=> {
     })
   }
   
-  const resetImages = () => {
+  const resetImages = (imagetypes:string,neededImagesNumber:number) => {
+    //console.log("resetImages çalışıyor");
+    //console.log("imagetypes",imagetypes);
+    //console.log("neededImagesNumber",neededImagesNumber);
+    socket.emit('resetImages',{
+      imagetypes:imagetypes,
+      neededImagesNumber:neededImagesNumber
+    });
     setReset(reset => !reset);
-
-    socket.emit('resetImages');
-    socket.on('arrayFromServer',(data)=>{
-      console.log("updatedimages via resetImages",data);
-      setImages(data);
-      console.log("images",images);
-    })    
   }
 
   useEffect(()=>{
@@ -33,23 +33,24 @@ const Page=()=> {
       //alert(data.message);
     })
     socket.on('initialImageLocations',(data)=>{
-      console.log("data",data);
+      //console.log("data",data);
       setImages(data);
-      console.log("images",images);
+      //console.log("images",images);
     })
   },[reset])
 
   useEffect(()=>{
-      console.log("Updated images",images);
+      //console.log("Updated images",images);
   },[images]);
+
   useEffect(() => {
-       socket.on("arrayFromServer",(data)=>{
+       socket.on("getImages",(data)=>{
+        //console.log("getImages çalışıyor data:",data);
         setImages(data);
        })
     }
   , [reset]);
   
-
   return (
     <main >
       <Navbar/>

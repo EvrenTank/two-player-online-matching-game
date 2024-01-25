@@ -3,6 +3,7 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import { Button } from "react-bootstrap";
 import { useEffect,useState } from "react";
+import socket from "./socket";
 
 const Heading = ({setColRowNumbers,colRowNumbers,updateComponents,setDisabled,reset,setReset,
                   playerturn,score,setScore,setPlayerturn,imagetypes,setImagetypes,resetImages}:any) => {
@@ -11,6 +12,10 @@ const Heading = ({setColRowNumbers,colRowNumbers,updateComponents,setDisabled,re
        const choosenValues = eventKey!.split("x");
        const rowNumber = choosenValues[0];
        const colNumber = choosenValues[1];
+       socket.emit("choosesizes",{
+        colNumber:colNumber,
+        rowNumber:rowNumber
+       })
        //console.log("rowNumber: " + rowNumber);
        //console.log("colNumber: " + colNumber);
        setColRowNumbers({...colRowNumbers,rowNumber:rowNumber,colNumber:colNumber});
@@ -24,7 +29,10 @@ const Heading = ({setColRowNumbers,colRowNumbers,updateComponents,setDisabled,re
     }
 
     const handleSelectPictures = (eventKey:string | null,event:any) => {
-       setImagetypes((prevType:any)=>{
+        socket.emit("setimagetypes",{
+            imagetypes:eventKey
+        })
+        setImagetypes((prevType:any)=>{
         return {...prevType,type:eventKey}});
        setDisabled([]);
        setScore((prevScore:any)=> {
@@ -32,9 +40,22 @@ const Heading = ({setColRowNumbers,colRowNumbers,updateComponents,setDisabled,re
         setPlayerturn(true);   
         setReset((prev:boolean) => !prev);
      }
+    useEffect(()=>{
+        socket.on("sizes",(data)=>{
+            setColRowNumbers({...colRowNumbers,rowNumber:data.rowNumber,colNumber:data.colNumber});
+        })
+        socket.on("imagetypes",(data)=>{
+            setImagetypes((prevType:any)=>{
+                return {...prevType,type:data.imagetypes}
+            })
+        })
+        updateComponents(colRowNumbers);
 
+    },[reset])
     useEffect(()=>{
         updateComponents(colRowNumbers);
+        setScore((prevScore:any)=> {
+            return {...prevScore,first:0,second:0}});
     },[colRowNumbers,imagetypes.type,reset]);
     
     return (
@@ -70,7 +91,9 @@ const Heading = ({setColRowNumbers,colRowNumbers,updateComponents,setDisabled,re
                     </DropdownButton> 
             </Card.Title>
             <Card.Text className="w-100">Sıradaki Oyuncu:{playerturn ? "Player1":"Player2"}</Card.Text>
-            <Button className="d-inline" variant="outline-info" size="lg" onClick={resetImages}>RESET</Button>
+            <Button className="d-inline" variant="outline-info" size="lg" onClick={()=>{
+                resetImages(imagetypes,(colRowNumbers.colNumber*colRowNumbers.rowNumber/2));
+            }}>RESET</Button>
 
         </Card> 
     );
