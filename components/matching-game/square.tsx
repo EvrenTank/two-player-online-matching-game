@@ -3,9 +3,10 @@ import Card from 'react-bootstrap/Card';
 import Image from 'next/image';
 import {io,Socket} from "socket.io-client";
 import { useEffect,useState } from 'react';
-import socket from './socket';
 
-const Square = ({imgSrc,index,choosentwo,setChoosentwo,disabled,setDisabled,check,reset,setReset}:{
+const Square = ({
+    imgSrc,index,choosentwo,setChoosentwo,disabled,socket,
+    setDisabled,check,reset,setReset,anyclick,setAnyclick}:{
     imgSrc:string,
     index:string,
     choosentwo:any,
@@ -15,7 +16,10 @@ const Square = ({imgSrc,index,choosentwo,setChoosentwo,disabled,setDisabled,chec
     check:any,
     reset:any,
     setReset:any,
-    setPlayerturn:any;
+    socket:any,
+    setPlayerturn:any,
+    anyclick:any,
+    setAnyclick:any;
 }) => {
 
     const [open, setOpen]=useState(false);
@@ -62,7 +66,7 @@ const Square = ({imgSrc,index,choosentwo,setChoosentwo,disabled,setDisabled,chec
     useEffect(()=>{
         checkIfMatched();
     },[disabled,choosentwo,matched]);
-
+    
     useEffect(()=> {
         socket.on("getIndex",(data:{index:string,open:boolean})=>{
             //console.log("burası çalışıyor");
@@ -75,20 +79,28 @@ const Square = ({imgSrc,index,choosentwo,setChoosentwo,disabled,setDisabled,chec
                 setOpen(data.open);
             }
         });
-        socket.on("setMatched",(data) => {
+        socket.on("setMatched",(data:any) => {
             if(data.index == index && data.matched == true){
                 setMatched(true);
             }
         });
+        socket.on("choosen",(data:any)=>{
+            console.log("data.choosentwo:",data.choosentwo);
+            console.log("kodun çalıştığı square:",index);
+            console.log("choosentwo:",choosentwo);
+            if(data.index == index ){
+            setChoosentwo((prev:any)=>{
+                //setChoosentwo({...choosentwo,first:{imgUrl:null,index:null},second:{imgUrl:null,index:null}
+                return {...prev,first:{imgUrl:data.choosentwo.first.imgUrl,index:data.choosentwo.first.index},second:{imgUrl:data.choosentwo.second.imgUrl,index:data.choosentwo.second.index}}
+            })
+        }})
     },[open]);
-
     
     useEffect(()=>{
         setOpen(false);
         setMatched(false);
         setDuration(true);
         setTimeout(()=>{setDuration(false)},300);
-
     },[reset]);
 
     return (
@@ -100,6 +112,7 @@ const Square = ({imgSrc,index,choosentwo,setChoosentwo,disabled,setDisabled,chec
         }}
         onClick={()=>{
             check(imgSrc,index);
+            setAnyclick((anyclick:boolean) => !anyclick);
         }}
 >
             <Card className='w-100 h-100' style={{

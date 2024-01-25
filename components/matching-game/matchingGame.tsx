@@ -5,10 +5,10 @@ import { useEffect, useState } from "react";
 import Square from "./square";
 import {shuffleArray,imgDirectories} from "./images";
 import {io,Socket} from "socket.io-client";
-const socket:Socket = io.connect("http://localhost:3001");
 
-const MatchingGame = ({sendMessage,images,resetImages}:any) => {
+const MatchingGame = ({sendMessage,images,resetImages,socket}:any) => {
     const [reset,setReset] = useState(true);
+    const [anyclick, setAnyclick] = useState(false);//herhangi bir square elemanında click event oldu mu?
     const [choosentwo,setChoosentwo] = useState<{first:any,second:any}>({
         first:{
             imgUrl:null,
@@ -127,42 +127,53 @@ const MatchingGame = ({sendMessage,images,resetImages}:any) => {
         setPlayerturn(true);
         setReset(reset=>!reset);
     },[images]);
-    useEffect(()=>{
 
-    },[choosentwo]);
+    useEffect(()=>{
+        socket.emit("setchoosentwo",{choosentwo:choosentwo});
+        socket.on("choosen",(data:any)=>{
+            setChoosentwo(data.choosentwo);
+        });
+    },[anyclick])
 
     useEffect(()=>{
         console.log("score");
-        socket.on("newScore", (data)=>{
+        socket.on("newScore", (data:any)=>{
             console.log("score",data.score);
             setScore(data.score);
         })
     },[disabled]);
-    useEffect(()=>{
 
-    },[])
     useEffect(()=>{
-        console.log("choosentwo",choosentwo);
-        socket.on("playerturn",(data)=>{
+        socket.on("playerturn",(data:any)=>{
             setPlayerturn(data.playerturn);
         })
-        socket.emit("setchoosentwo",{choosentwo:choosentwo})
     },[choosentwo]);
     useEffect(()=>{
+        console.log("socket",socket);
+    },[choosentwo]);
+   /* useEffect(()=>{
+        console.log("socket",socket);
+    },[socket]);*/
+    
+    /*useEffect(()=>{
         socket.on("choosen",(data)=>{
-            
+               console.log("data.choosentwo",data.choosentwo);  
+               console.log("choosentwo",choosentwo);  
+               console.log("(data.choosentwo != choosentwo",data.choosentwo != choosentwo);  
+            if(data.choosentwo != choosentwo){
+            setChoosentwo(data.choosentwo);}
+        })
+    },[choosentwo]);*/
+
+   /* const tryIt = () => {
+        socket.emit("setchoosentwo",{choosentwo:choosentwo});
+        socket.on("choosen",(data)=>{
             setChoosentwo((prev)=>{
                 //setChoosentwo({...choosentwo,first:{imgUrl:null,index:null},second:{imgUrl:null,index:null}
                 return {...prev,first:{imgUrl:data.choosentwo.first.imgUrl,index:data.choosentwo.first.index},second:{imgUrl:data.choosentwo.second.imgUrl,index:data.choosentwo.second.index}}
             })
         })
-    },[]);
-    useEffect(()=>{
-        socket.on("choosen",(data)=>{
-            console.log("buranın datası",data.choosentwo);
-        })
-    },[choosentwo])
-    
+    }*/
 
     useEffect(()=>{updateComponents(colRowNumbers)},[]);
     useEffect(()=>{
@@ -184,6 +195,9 @@ const MatchingGame = ({sendMessage,images,resetImages}:any) => {
                             return (
                                 <Col  key={`${index2} ${colRowNumbers.colNumber} ${colRowNumbers.rowNumber}`}>
                                     <Square
+                                    anyclick={anyclick}
+                                    setAnyclick={setAnyclick}
+                                    socket={socket}
                                     key={`${index2} ${colRowNumbers.colNumber} ${colRowNumbers.rowNumber}`}
                                     check={check} setPlayerturn={setPlayerturn}
                                     choosentwo={choosentwo} setChoosentwo={setChoosentwo} 

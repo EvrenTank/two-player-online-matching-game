@@ -37,7 +37,7 @@ const Page=()=> {
       setImages(data);
       console.log("images",images);
     })
-  },[socket])
+  },[reset])
 
   useEffect(()=>{
       console.log("Updated images",images);
@@ -53,7 +53,7 @@ const Page=()=> {
   return (
     <main >
       <Navbar/>
-      <MatchingGame sendMessage={sendMessage} images={images} resetImages={resetImages}></MatchingGame>
+      <MatchingGame socket={socket} sendMessage={sendMessage} images={images} resetImages={resetImages}></MatchingGame>
     </main>
   )
 }
