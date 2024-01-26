@@ -30,6 +30,9 @@ const MatchingGame = ({sendMessage,images,resetImages,socket}:any) => {
     })  
 
     const check = (imgUrl:string,index:string) => {
+        socket.on("disabled",(data)=>{
+            setDisabled(data.disabled);
+        })
         console.log("Check metodu çalışıyor mu?");
         if(choosentwo.first.imgUrl == null && choosentwo.second.imgUrl == null){
            setChoosentwo({...choosentwo,first:{imgUrl:imgUrl,index:index}});
@@ -141,6 +144,7 @@ const MatchingGame = ({sendMessage,images,resetImages,socket}:any) => {
             console.log("score",data.score);
             setScore(data.score);
         })
+        socket.emit("setdisabled",{disabled:disabled});
     },[disabled]);
 
     useEffect(()=>{
@@ -150,25 +154,7 @@ const MatchingGame = ({sendMessage,images,resetImages,socket}:any) => {
     },[choosentwo]);
 
     
-    /*useEffect(()=>{
-        socket.on("choosen",(data)=>{
-               console.log("data.choosentwo",data.choosentwo);  
-               console.log("choosentwo",choosentwo);  
-               console.log("(data.choosentwo != choosentwo",data.choosentwo != choosentwo);  
-            if(data.choosentwo != choosentwo){
-            setChoosentwo(data.choosentwo);}
-        })
-    },[choosentwo]);*/
 
-   /* const tryIt = () => {
-        socket.emit("setchoosentwo",{choosentwo:choosentwo});
-        socket.on("choosen",(data)=>{
-            setChoosentwo((prev)=>{
-                //setChoosentwo({...choosentwo,first:{imgUrl:null,index:null},second:{imgUrl:null,index:null}
-                return {...prev,first:{imgUrl:data.choosentwo.first.imgUrl,index:data.choosentwo.first.index},second:{imgUrl:data.choosentwo.second.imgUrl,index:data.choosentwo.second.index}}
-            })
-        })
-    }*/
 
     useEffect(()=>{updateComponents(colRowNumbers)},[]);
     useEffect(()=>{
