@@ -6,7 +6,7 @@ import Square from "./square";
 import {shuffleArray,imgDirectories} from "./images";
 import {io,Socket} from "socket.io-client";
 
-const MatchingGame = ({sendMessage,images,resetImages,socket}:any) => {
+const MatchingGame = ({images,resetImages,socket,room,setRoom}:any) => {
     const [reset,setReset] = useState(true);
     const [anyclick, setAnyclick] = useState(false);//herhangi bir square elemanında click event oldu mu?
     const [choosentwo,setChoosentwo] = useState<{first:any,second:any}>({
@@ -30,9 +30,7 @@ const MatchingGame = ({sendMessage,images,resetImages,socket}:any) => {
     })  
 
     const check = (imgUrl:string,index:string) => {
-        socket.on("disabled",(data)=>{
-            setDisabled(data.disabled);
-        })
+
         console.log("Check metodu çalışıyor mu?");
         if(choosentwo.first.imgUrl == null && choosentwo.second.imgUrl == null){
            setChoosentwo({...choosentwo,first:{imgUrl:imgUrl,index:index}});
@@ -47,7 +45,8 @@ const MatchingGame = ({sendMessage,images,resetImages,socket}:any) => {
                                     setScore((prevScore:any) =>{ 
                                         socket.emit("setScore",{
                                             score:{...prevScore,first:prevScore.first+1},
-                                            playerturn: "player1"
+                                            playerturn: "player1",
+                                            room: room.roomNumber
                                         })
                                         return {...prevScore,first:prevScore.first+1}});
                                 }
@@ -57,7 +56,8 @@ const MatchingGame = ({sendMessage,images,resetImages,socket}:any) => {
                                     setScore( (prevScore:any) =>{ 
                                         socket.emit("setScore",{
                                             score:{...prevScore,second:prevScore.second+1},
-                                            playerturn:"player2"
+                                            playerturn:"player2",
+                                            room: room.roomNumber
                                         })                                        
                                         return {...prevScore,second:prevScore.second+1}});}
                 
@@ -72,7 +72,8 @@ const MatchingGame = ({sendMessage,images,resetImages,socket}:any) => {
                     setScore( (prevScore:any) =>{ 
                         socket.emit("setScore",{
                         score:{...prevScore,first:prevScore.first+1},
-                        playerturn:"player1"
+                        playerturn:"player1",
+                        room: room.roomNumber
                         })
                         return {...prevScore,first:prevScore.first+1}});
                 }
@@ -81,14 +82,16 @@ const MatchingGame = ({sendMessage,images,resetImages,socket}:any) => {
 
                         socket.emit("setScore",{
                         score:{...prevScore,second:prevScore.second+1},
-                        playerturn:"player2"
+                        playerturn:"player2",
+                        room: room.roomNumber
                                 }) 
                         return {...prevScore,second:prevScore.second+1}});}
             }
             else if(choosentwo.first.imgUrl != choosentwo.second.imgUrl && choosentwo.first.index != index && choosentwo.second.index != index) {
                 setChoosentwo({...choosentwo,first:{imgUrl:imgUrl,index:index},second:{imgUrl:null,index:null}}); 
                 socket.emit("setplayerTurn",{
-                    playerturn:!playerturn
+                    playerturn:!playerturn,
+                    room: room.roomNumber
                 });
                 setPlayerturn((playerturn:boolean)=>!playerturn)           }
         }
@@ -132,10 +135,13 @@ const MatchingGame = ({sendMessage,images,resetImages,socket}:any) => {
     },[images]);
 
     useEffect(()=>{
-        socket.emit("setchoosentwo",{choosentwo:choosentwo});
+        console.log("socket.id:",socket.id);
+        socket.emit("setchoosentwo",{choosentwo:choosentwo, room: room.roomNumber});
         socket.on("choosen",(data:any)=>{
             setChoosentwo(data.choosentwo);
         });
+        socket.emit("setdisabled",{disabled:disabled, room: room.roomNumber});
+        socket.on("disabled",(data:any)=>{setDisabled(data.disabled);});
     },[anyclick])
 
     useEffect(()=>{
@@ -144,7 +150,6 @@ const MatchingGame = ({sendMessage,images,resetImages,socket}:any) => {
             console.log("score",data.score);
             setScore(data.score);
         })
-        socket.emit("setdisabled",{disabled:disabled});
     },[disabled]);
 
     useEffect(()=>{
@@ -163,8 +168,9 @@ const MatchingGame = ({sendMessage,images,resetImages,socket}:any) => {
     },[colRowNumbers.colNumber,colRowNumbers.rowNumber,colRowNumbers,imagetypes.type,reset]);
     return (
 
-                <Container className='d-grid gap-2 col-12 col-md-6 mb-5' onClick={sendMessage}>
-                <Row> <Heading setColRowNumbers={setColRowNumbers} colRowNumbers={colRowNumbers} updateComponents={updateComponents} setDisabled={setDisabled}
+                <Container className='d-grid gap-2 col-12 col-md-6 mb-5'>
+                <Row> <Heading room={room} setRoom={setRoom}
+                socket={socket} setColRowNumbers={setColRowNumbers} colRowNumbers={colRowNumbers} updateComponents={updateComponents} setDisabled={setDisabled}
                 playerturn={playerturn} reset = {reset} setReset={setReset}
                 score={score} setScore={setScore} setPlayerturn={setPlayerturn} imagetypes={imagetypes} setImagetypes={setImagetypes}
                 resetImages={resetImages}
@@ -176,6 +182,7 @@ const MatchingGame = ({sendMessage,images,resetImages,socket}:any) => {
                             return (
                                 <Col  key={`${index2} ${colRowNumbers.colNumber} ${colRowNumbers.rowNumber}`}>
                                     <Square
+                                    room={room}
                                     anyclick={anyclick}
                                     setAnyclick={setAnyclick}
                                     socket={socket}

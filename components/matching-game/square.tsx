@@ -5,8 +5,9 @@ import {io,Socket} from "socket.io-client";
 import { useEffect,useState } from 'react';
 
 const Square = ({
-    imgSrc,index,choosentwo,setChoosentwo,disabled,socket,
+    room,imgSrc,index,choosentwo,setChoosentwo,disabled,socket,
     setDisabled,check,reset,setReset,anyclick,setAnyclick}:{
+    room:{roomNumber:number},
     imgSrc:string,
     index:string,
     choosentwo:any,
@@ -31,20 +32,23 @@ const Square = ({
             setOpen(true);
             socket.emit('sendIndex',{
                 index:index,
-                open:true
+                open:true,
+                room: room.roomNumber
             });
         }
         else if(matched){
             setOpen(true);//Burası hemen update edilmedigi icin oluyor o hata. Eşleştikten snra önce kapanıyor snra tekrar açılıyor.
             socket.emit('sendIndex',{
                 index:index,
-                open:true
+                open:true,
+                room: room.roomNumber
             });        }
         else if(!matched){
             setOpen(false);
             socket.emit('sendIndex',{
                 index:index,
-                open:false
+                open:false,
+                room: room.roomNumber
             });          }
     }
 
@@ -56,7 +60,8 @@ const Square = ({
                 setMatched(true);
                 socket.emit('isMatched',{
                     index:index,
-                    matched:true
+                    matched:true, 
+                    room: room.roomNumber
                 });
                 //console.log("matched",matched);
             }

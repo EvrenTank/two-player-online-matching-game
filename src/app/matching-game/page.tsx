@@ -11,19 +11,18 @@ const Page=()=> {
   const myValue = Math.floor(Math.random()*155);
   const [images,setImages] = useState<string[]>([]);
   const [reset,setReset] = useState(false);
-  const sendMessage = ()=> {
-    socket.emit("send_message",{
-      message:myValue
-    })
-  }
+  const [room,setRoom] = useState<{roomNumber:number}>({
+    roomNumber:0
+});
   
   const resetImages = (imagetypes:string,neededImagesNumber:number) => {
     //console.log("resetImages çalışıyor");
     //console.log("imagetypes",imagetypes);
-    //console.log("neededImagesNumber",neededImagesNumber);
+    console.log("room.roomNumber",room.roomNumber);
     socket.emit('resetImages',{
       imagetypes:imagetypes,
-      neededImagesNumber:neededImagesNumber
+      neededImagesNumber:neededImagesNumber,
+      room:room.roomNumber
     });
     setReset(reset => !reset);
   }
@@ -42,6 +41,9 @@ const Page=()=> {
   useEffect(()=>{
       //console.log("Updated images",images);
   },[images]);
+  useEffect(()=>{
+    console.log("socket.id",socket.id);
+  },[socket]);
 
   useEffect(() => {
        socket.on("getImages",(data)=>{
@@ -54,7 +56,7 @@ const Page=()=> {
   return (
     <main >
       <Navbar/>
-      <MatchingGame socket={socket} sendMessage={sendMessage} images={images} resetImages={resetImages}></MatchingGame>
+      <MatchingGame socket={socket} room={room} setRoom={setRoom} images={images} resetImages={resetImages}></MatchingGame>
     </main>
   )
 }
