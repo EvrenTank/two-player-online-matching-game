@@ -5,8 +5,9 @@ import {io,Socket} from "socket.io-client";
 import { useEffect,useState } from 'react';
 
 const Square = ({
-    room,imgSrc,index,choosentwo,setChoosentwo,disabled,socket,
+    currentplayer,room,imgSrc,index,choosentwo,setChoosentwo,disabled,socket,
     setDisabled,check,reset,setReset,anyclick,setAnyclick}:{
+    currentplayer:{current:string},
     room:{roomNumber:number},
     imgSrc:string,
     index:string,
@@ -112,7 +113,7 @@ const Square = ({
         <Card className='w-auto ratio ratio-1x1' 
         style={{
             cursor:'pointer',
-            pointerEvents: matched ? "none":"auto",
+            pointerEvents: matched ? "none": currentplayer.current == socket.id ? "auto":"none",
             opacity: matched ? 0.5 : 1,
         }}
         onClick={()=>{

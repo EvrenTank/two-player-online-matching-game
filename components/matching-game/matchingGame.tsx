@@ -8,6 +8,7 @@ import {io,Socket} from "socket.io-client";
 
 const MatchingGame = ({images,resetImages,socket,room,setRoom}:any) => {
     const [reset,setReset] = useState(true);
+    const [currentplayer,setCurrentplayer] = useState<{current:string}>({current:""});
     const [anyclick, setAnyclick] = useState(false);//herhangi bir square elemanında click event oldu mu?
     const [choosentwo,setChoosentwo] = useState<{first:any,second:any}>({
         first:{
@@ -62,6 +63,13 @@ const MatchingGame = ({images,resetImages,socket,room,setRoom}:any) => {
                                         return {...prevScore,second:prevScore.second+1}});}
                 
             }
+            if(choosentwo.first.imgUrl != imgUrl){
+                setPlayerturn((playerturn:boolean)=>!playerturn);
+                socket.emit("setplayerTurn",{
+                    playerturn:!playerturn,
+                    room: room.roomNumber
+                });
+            }
         }
         else if(choosentwo.first.imgUrl != null && choosentwo.second.imgUrl != null){
             if(choosentwo.first.imgUrl == choosentwo.second.imgUrl && choosentwo.first.index != index && choosentwo.second.index != index) {
@@ -89,11 +97,8 @@ const MatchingGame = ({images,resetImages,socket,room,setRoom}:any) => {
             }
             else if(choosentwo.first.imgUrl != choosentwo.second.imgUrl && choosentwo.first.index != index && choosentwo.second.index != index) {
                 setChoosentwo({...choosentwo,first:{imgUrl:imgUrl,index:index},second:{imgUrl:null,index:null}}); 
-                socket.emit("setplayerTurn",{
-                    playerturn:!playerturn,
-                    room: room.roomNumber
-                });
-                setPlayerturn((playerturn:boolean)=>!playerturn)           }
+
+                        }
         }
     }
 
@@ -127,6 +132,16 @@ const MatchingGame = ({images,resetImages,socket,room,setRoom}:any) => {
         //console.log("images",images);
         //console.log("imageurls",imageurls);
     }
+    useEffect(()=>{
+        socket.emit("setTurn",({room:room.roomNumber}));
+        socket.on("turn",(data:any)=>{
+            setCurrentplayer((prev)=>{
+                return {...prev,current:data.currentPlayer};
+            })
+        });
+        console.log("current player",currentplayer.current);
+        console.log("socket.id",socket.id);
+    },[room.roomNumber,playerturn]);
     useEffect(()=>{
         //console.log("images:",images);
         updateComponents(colRowNumbers);
@@ -182,6 +197,7 @@ const MatchingGame = ({images,resetImages,socket,room,setRoom}:any) => {
                             return (
                                 <Col  key={`${index2} ${colRowNumbers.colNumber} ${colRowNumbers.rowNumber}`}>
                                     <Square
+                                    currentplayer={currentplayer}
                                     room={room}
                                     anyclick={anyclick}
                                     setAnyclick={setAnyclick}
