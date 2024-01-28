@@ -4,7 +4,7 @@ import MatchingGame from '../../../components/matching-game/matchingGame';
 import Navbar from '../../../components/homePage/navbar';
 import {io,Socket} from "socket.io-client";
 import { useEffect,useState } from 'react';
-const socket:Socket = io("https://server-iosocket.vercel.app");
+const socket:Socket = io("http://localhost:3001");
 
 const Page=()=> {
 
